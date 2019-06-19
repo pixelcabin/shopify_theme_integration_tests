@@ -1,0 +1,527 @@
+{%- if section.settings.hero_layout == 'full_width' and section.settings.hero_size == 'adapt' -%}
+  {%- if section.settings.image.aspect_ratio == blank -%}
+    {%- assign min_aspect_ratio = 2.0 -%}
+  {%- else -%}
+    {%- assign min_aspect_ratio = section.settings.image.aspect_ratio -%}
+  {%- endif -%}
+  {%- assign wrapper_height = 100 | divided_by: min_aspect_ratio -%}
+  {%- style -%}
+    .hero-{{ section.id }} {
+      height: {{- wrapper_height -}}vw !important;
+    }
+  {%- endstyle -%}
+{%- endif -%}
+<div data-section-id="{{ section.id }}" data-section-type="hero-section">
+  {%- if section.settings.hero_layout == 'fixed_width' -%}
+    <div class="page-width">
+  {%- endif -%}
+  {%- if section.settings.hero_layout == 'fixed_width' and section.settings.hero_size ==  'adapt' -%}
+    {%- assign slide_width = 1090 -%}
+    {%- assign min_aspect_ratio = section.settings.image.aspect_ratio | default: 2.0 -%}
+    <div class="hero-fixed-width hero--adapt"
+         id="Hero-{{ section.id }}"
+         data-layout="{{ section.settings.hero_layout }}">
+      {%- assign img_url = section.settings.image | img_url: '1x1' | replace: '_1x1.', '_{width}x.' -%}
+      {%- if section.settings.image.width < max_width -%}
+        {%- assign slide_width = section.settings.image.width -%}
+      {%- endif -%}
+      <div class="hero-fixed-width__content">
+        <div class="page-width text-center">
+          {%- if section.settings.title != blank -%}
+            <h2 class="h1 mega-title{% if section.settings.text_size == 'large' %} mega-title--large{% endif %}">{{ section.settings.title | escape }}</h2>
+          {%- endif -%}
+          {%- if section.settings.text != blank -%}
+            <div class="rte-setting mega-subtitle{% if section.settings.text_size == 'large' %} mega-subtitle--large{% endif %}">{{ section.settings.text }}</div>
+          {%- endif -%}
+          {%- if section.settings.button_label != blank and section.settings.button_link != blank -%}
+            <a href="{{ section.settings.button_link }}" class="btn hero__btn">
+              {{ section.settings.button_label | escape }}
+            </a>
+          {%- endif -%}
+        </div>
+      </div>
+      {%- if section.settings.image != blank -%}
+        <img class="hero-fixed-width__image lazyload lazypreload"
+             src="{{ section.settings.image | img_url: '300x300' }}"
+             data-src="{{ img_url }}"
+             data-widths="[180, 360, 470, 600, 770, 970, 1060, 1280, 1512, 1728, 2048]"
+             data-aspectratio="{{ section.settings.image.aspect_ratio }}"
+             data-sizes="auto"
+             style="{%- if slide_width <= max_width -%}
+                      {%- assign min_width = slide_width | times: 100 | divided_by: max_width -%}
+                      min-width: {{ min_width }}%;
+                    {%- endif -%}
+                    object-position: {{ section.settings.alignment }};"
+             alt="{{ section.settings.image.alt | escape }}">
+      {%- else -%}
+        <span>
+          {% capture current %}{% cycle 1, 2 %}{% endcapture %}
+          {{ 'lifestyle-' | append: current | placeholder_svg_tag: 'placeholder-svg' }}
+        </span>
+      {%- endif -%}
+      <noscript>
+        <div class="hero-fixed-width__image"{% if section.settings.image %} style="background-image: url('{{ section.settings.image | img_url: '2048x' }}'); background-position: center {{ section.settings.alignment }};"{% endif %}></div>
+      </noscript>
+    </div>
+  {%- else -%}
+    <div class="hero hero--{{ section.settings.hero_size }} hero-{{ section.id }}{% if section.settings.title != blank or section.settings.text != blank or section.settings.button_label != blank %} hero__overlay{% endif %} box ratio-container lazyload js"
+         id="Hero-{{ section.id }}"
+         data-layout="{{ section.settings.hero_layout }}"
+         {%- if section.settings.image -%}
+         data-bgset="{% include 'bgset', image: section.settings.image %}"
+         data-sizes="auto"
+         data-parent-fit="cover"
+         style="background-position: {{ section.settings.alignment }}; background-image: url('{{ section.settings.image | img_url: '300x300' }});"
+         {%- endif -%}>
+    {%- if section.settings.image == blank -%}
+      <div class="placeholder-background">
+        {{ 'lifestyle-1' | placeholder_svg_tag: 'placeholder-svg' }}
+      </div>
+    {%- endif -%}
+      <div class="hero__inner">
+        <div class="page-width text-center">
+          {%- if section.settings.title != blank -%}
+            <h2 class="h1 mega-title{% if section.settings.text_size == 'large' %} mega-title--large{% endif %}">{{ section.settings.title | escape }}</h2>
+          {%- endif -%}
+          {%- if section.settings.text != blank -%}
+            <div class="rte-setting mega-subtitle{% if section.settings.text_size == 'large' %} mega-subtitle--large{% endif %}">{{ section.settings.text }}</div>
+          {%- endif -%}
+          {%- if section.settings.button_label != blank and section.settings.button_link != blank -%}
+            <a href="{{ section.settings.button_link }}" class="btn hero__btn">
+              {{ section.settings.button_label | escape }}
+            </a>
+          {%- endif -%}
+        </div>
+      </div>
+    </div>
+    <noscript>
+      <div class="hero hero--{{ section.settings.hero_size }}{% if section.settings.title != blank or section.settings.text != blank or section.settings.button_label != blank %} hero__overlay{% endif %}"{% if section.settings.image %} style="background-image: url('{{ section.settings.image | img_url: '2048x' }}'); background-position: center {{ section.settings.alignment }};"{% endif %}></div>
+    </noscript>
+  {%- endif -%}
+  {%- if section.settings.hero_layout == 'fixed_width' -%}
+    </div>
+  {%- endif -%}
+</div>
+
+{% schema %}
+{
+  "name": {
+    "de": "Foto mit überlegtem Text",
+    "en": "Image with text overlay",
+    "es": "Imagen con texto",
+    "fr": "Image avec texte",
+    "it": "Immagine con testo",
+    "ja": "テキストオーバーレイ付き画像",
+    "nl": "Foto met tekstoverlay",
+    "pt-BR": "Imagem com texto",
+    "zh-CN": "带文本叠加的图片",
+    "zh-TW": "附文字疊加的圖片"
+  },
+  "class": "index-section index-section--flush",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": {
+        "de": "Foto",
+        "en": "Image",
+        "es": "Imagen",
+        "fr": "Image",
+        "it": "Immagine",
+        "ja": "画像",
+        "nl": "Afbeelding",
+        "pt-BR": "Imagem",
+        "zh-CN": "图片",
+        "zh-TW": "圖片"
+      }
+    },
+    {
+      "type": "select",
+      "id": "alignment",
+      "label": {
+        "de": "Fotoausrichtung",
+        "en": "Image alignment",
+        "es": "Alineación de imagen",
+        "fr": "Alignement de l'image",
+        "it": "Allineamento immagine",
+        "ja": "画像アラインメント",
+        "nl": "Afbeelding uitlijnen",
+        "pt-BR": "Alinhamento da imagem",
+        "zh-CN": "图片对齐方式",
+        "zh-TW": "圖片對齊"
+      },
+      "default": "center",
+      "options": [
+        {
+          "value": "top",
+          "label": {
+            "de": "Oben",
+            "en": "Top",
+            "es": "Superior",
+            "fr": "Haut",
+            "it": "In alto",
+            "ja": "上",
+            "nl": "Boven",
+            "pt-BR": "Acima",
+            "zh-CN": "顶部",
+            "zh-TW": "頂部"
+          }
+        },
+        {
+          "value": "center",
+          "label": {
+            "de": "Mitte",
+            "en": "Middle",
+            "es": "Al medio",
+            "fr": "Milieu",
+            "it": "Al centro",
+            "ja": "中央",
+            "nl": "Midden",
+            "pt-BR": "Meio",
+            "zh-CN": "中间",
+            "zh-TW": "中央"
+          }
+        },
+        {
+          "value": "bottom",
+          "label": {
+            "de": "Unten",
+            "en": "Bottom",
+            "es": "Inferior",
+            "fr": "Bas",
+            "it": "In basso",
+            "ja": "下",
+            "nl": "Onder",
+            "pt-BR": "Abaixo",
+            "zh-CN": "底部",
+            "zh-TW": "底部"
+          }
+        }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "hero_layout",
+      "label": {
+        "de": "Layout",
+        "en": "Layout",
+        "es": "Diseño",
+        "fr": "Mise en page",
+        "it": "Layout",
+        "ja": "レイアウト",
+        "nl": "Indeling",
+        "pt-BR": "Layout",
+        "zh-CN": "布局",
+        "zh-TW": "版面配置"
+      },
+      "default": "full_width",
+      "options": [
+        {
+          "label": {
+            "de": "Volle Breite",
+            "en": "Full width",
+            "es": "Ancho completo",
+            "fr": "Pleine largeur",
+            "it": "Intera larghezza",
+            "ja": "全幅",
+            "nl": "Volledige breedte",
+            "pt-BR": "Largura completa",
+            "zh-CN": "全宽",
+            "zh-TW": "全寬度"
+          },
+          "value": "full_width"
+        },
+        {
+          "label": {
+            "de": "Feste Breite",
+            "en": "Fixed width",
+            "es": "Ancho fijo",
+            "fr": "Largeur fixe",
+            "it": "Larghezza fissa",
+            "ja": "固定幅",
+            "nl": "Vaste breedte",
+            "pt-BR": "Largura fixa",
+            "zh-CN": "固定宽度",
+            "zh-TW": "固定寬度"
+          },
+          "value": "fixed_width"
+        }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "hero_size",
+      "label": {
+        "de": "Bereichs-Höhe",
+        "en": "Section height",
+        "es": "Altura de la sección",
+        "fr": "Hauteur de la section",
+        "it": "Altezza sezione",
+        "ja": "セクションの高さ",
+        "nl": "Sectiehoogte",
+        "pt-BR": "Altura da seção",
+        "zh-CN": "分区高度",
+        "zh-TW": "區塊高度"
+      },
+      "default": "medium",
+      "options": [
+        {
+          "label": {
+            "de": "An Bild anpassen",
+            "en": "Adapt to image",
+            "es": "Adaptar a la imagen",
+            "fr": "S'adapter à l'image",
+            "it": "Adatta all'immagine",
+            "ja": "画像に適応する",
+            "nl": "Aanpassen aan afbeelding",
+            "pt-BR": "Adaptar à imagem",
+            "zh-CN": "适应图片",
+            "zh-TW": "配合圖片"
+          },
+          "value": "adapt"
+        },
+        {
+          "label": {
+            "de": "Extra klein",
+            "en": "Extra Small",
+            "es": "Extra pequeña",
+            "fr": "Très petite",
+            "it": "Molto piccola",
+            "ja": "極小",
+            "nl": "Extra klein",
+            "pt-BR": "Extra pequeno",
+            "zh-CN": "特小",
+            "zh-TW": "超小型"
+          },
+          "value": "x-small"
+        },
+        {
+          "label": {
+            "de": "Klein",
+            "en": "Small",
+            "es": "Pequeña",
+            "fr": "Petite",
+            "it": "Small",
+            "ja": "小",
+            "nl": "Klein",
+            "pt-BR": "Pequeno",
+            "zh-CN": "小",
+            "zh-TW": "小型"
+          },
+          "value": "small"
+        },
+        {
+          "label": {
+            "de": "Mitte",
+            "en": "Medium",
+            "es": "Mediana",
+            "fr": "Moyenne",
+            "it": "Medium",
+            "ja": "中",
+            "nl": "Gemiddeld",
+            "pt-BR": "Médio",
+            "zh-CN": "中等",
+            "zh-TW": "中等"
+          },
+          "value": "medium"
+        },
+        {
+          "label": {
+            "de": "Groß",
+            "en": "Large",
+            "es": "Grande",
+            "fr": "Grande",
+            "it": "Large",
+            "ja": "大",
+            "nl": "Groot",
+            "pt-BR": "Grande",
+            "zh-CN": "大",
+            "zh-TW": "大型"
+          },
+          "value": "large"
+        },
+        {
+          "label": {
+            "de": "Extra groß",
+            "en": "Extra Large",
+            "es": "Extra grande",
+            "fr": "Très grande",
+            "it": "Molto grande",
+            "ja": "特大",
+            "nl": "Extra groot",
+            "pt-BR": "Extra grande",
+            "zh-CN": "特大",
+            "zh-TW": "超大型"
+          },
+          "value": "x-large"
+        }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "text_size",
+      "label": {
+        "de": "Textgröße",
+        "en": "Text size",
+        "es": "Tamaño del texto",
+        "fr": "Taille du texte",
+        "it": "Dimensione testo",
+        "ja": "文字サイズ",
+        "nl": "Tekengrootte",
+        "pt-BR": "Tamanho do texto",
+        "zh-CN": "文本大小",
+        "zh-TW": "文字尺寸"
+      },
+      "default": "medium",
+      "options": [
+        {
+          "label": {
+            "de": "Mitte",
+            "en": "Medium",
+            "es": "Mediano",
+            "fr": "Moyenne",
+            "it": "Medium",
+            "ja": "中",
+            "nl": "Gemiddeld",
+            "pt-BR": "Médio",
+            "zh-CN": "中等",
+            "zh-TW": "中等"
+          },
+          "value": "medium"
+        },
+        {
+          "label": {
+            "de": "Groß",
+            "en": "Large",
+            "es": "Grande",
+            "fr": "Grande",
+            "it": "Large",
+            "ja": "大",
+            "nl": "Groot",
+            "pt-BR": "Grande",
+            "zh-CN": "大",
+            "zh-TW": "大型"
+          },
+          "value": "large"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": {
+        "de": "Titel",
+        "en": "Heading",
+        "es": "Título",
+        "fr": "En-tête",
+        "it": "Heading",
+        "ja": "見出し",
+        "nl": "Kop",
+        "pt-BR": "Título",
+        "zh-CN": "标题",
+        "zh-TW": "標題"
+      },
+      "default": {
+        "de": "Foto mit überlegtem Text",
+        "en": "Image with text overlay",
+        "es": "Imagen con texto",
+        "fr": "Image avec superposition de texte",
+        "it": "Immagine con testo",
+        "ja": "テキストオーバーレイ付き画像",
+        "nl": "Foto met tekstoverlay",
+        "pt-BR": "Imagem com sobreposição de texto",
+        "zh-CN": "带文本叠加的图片",
+        "zh-TW": "附文字疊加的圖片"
+      }
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": {
+        "de": "Text",
+        "en": "Text",
+        "es": "Texto",
+        "fr": "Texte",
+        "it": "Testo",
+        "ja": "テキスト",
+        "nl": "Tekst",
+        "pt-BR": "Texto",
+        "zh-CN": "文本",
+        "zh-TW": "文字"
+      },
+      "default": {
+        "de": "<p>Nutzen Sie überlegten Text, um Kunden über Ihre Marke zu informieren. Wählen Sie Fotos und Text aus, die zu Ihrer Marke passen.</p>",
+        "en": "<p>Use overlay text to give your customers insight into your brand. Select imagery and text that relates to your style and story.</p>",
+        "es": "<p>Usa el texto superpuesto para darles información a tus clientes sobre tu marca. Selecciona imágenes y textos que se relacionen con tu estilo e historia.</p>",
+        "fr": "<p>Utilisez la superposition de texte pour donner un aperçu de votre marque à vos clients. Utilisez une image et du texte qui se rapportent au style et à l'histoire de votre marque.</p>",
+        "it": "<p>Utilizza il testo in sovrapposizione per dare ai clienti informazioni sul tuo brand. Seleziona immagini e testo legati al tuo stile e alla tua storia.</p>",
+        "ja": "<p>オーバーレイテキストを使用して、お客様があなたのブランドについてよく理解できるようにします。あなたのスタイルやストーリーに関連する画像やテキストを選択してください。</p>",
+        "nl": "<p>Gebruik overlay-tekst om uw klanten inzicht te geven in uw merk. Selecteer afbeeldingen en tekst die betrekking hebben op uw stijl en verhaal.</p>",
+        "pt-BR": "<p>Use o texto de sobreposição para apresentar informações sobre sua marca aos clientes. Selecione imagens e textos que reflitam seu estilo e sua história.</p>",
+        "zh-CN": "<p>使用叠加文本让客户深入了解您的品牌。选择与您的风格和故事相关的图片和文本。</p>",
+        "zh-TW": "<p>運用文字疊加讓客戶更加瞭解您的品牌。選擇與您風格和品牌故事相關的圖像和文字。</p>"
+      }
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": {
+        "de": "Button-Etikett",
+        "en": "Button label",
+        "es": "Etiqueta de botón",
+        "fr": "Texte du bouton",
+        "it": "Etichetta pulsante",
+        "ja": "ボタンラベル",
+        "nl": "Knoplabel",
+        "pt-BR": "Etiqueta do botão",
+        "zh-CN": "按钮标签",
+        "zh-TW": "按鈕標籤"
+      }
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": {
+        "de": "Button-Etikett",
+        "en": "Button link",
+        "es": "Enlace de botón",
+        "fr": "Lien du bouton",
+        "it": "Link pulsante",
+        "ja": "ボタンリンク",
+        "nl": "Knoplink",
+        "pt-BR": "Link do botão",
+        "zh-CN": "按钮链接",
+        "zh-TW": "按鈕連結"
+      }
+    }
+  ],
+  "presets": [
+    {
+      "name": {
+        "de": "Foto mit überlegtem Text",
+        "en": "Image with text overlay",
+        "es": "Imagen con texto",
+        "fr": "Image avec superposition de texte",
+        "it": "Immagine con testo",
+        "ja": "テキストオーバーレイ付き画像",
+        "nl": "Foto met tekstoverlay",
+        "pt-BR": "Imagem com sobreposição de texto",
+        "zh-CN": "带文本叠加的图片",
+        "zh-TW": "附文字疊加的圖片"
+      },
+      "category": {
+        "de": "Foto",
+        "en": "Image",
+        "es": "Imagen",
+        "fr": "Image",
+        "it": "Immagine",
+        "ja": "画像",
+        "nl": "Afbeelding",
+        "pt-BR": "Imagem",
+        "zh-CN": "图片",
+        "zh-TW": "圖片"
+      }
+    }
+  ]
+}
+{% endschema %}

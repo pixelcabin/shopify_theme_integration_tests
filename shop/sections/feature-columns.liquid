@@ -1,0 +1,355 @@
+<div class="page-width">
+  {% if section.settings.title != blank %}
+    <div class="section-header text-center">
+      <h2>{{ section.settings.title | escape }}</h2>
+    </div>
+  {% endif %}
+
+  <div class="grid {% unless section.blocks.size == 5 %}grid--uniform{% endunless %} grid--flush-bottom">
+    {%- assign grid_item_width = 'medium-up--one-third' -%}
+    {%- assign max_height = 345 -%}
+    {% case section.blocks.size %}
+      {% when 1 %}
+        {%- assign grid_item_width = 'medium-up--one-half' -%}
+        {%- assign max_height = 530 -%}
+      {% when 2 %}
+        {%- assign grid_item_width = 'medium-up--one-half' -%}
+        {%- assign max_height = 530 -%}
+      {% when 4 %}
+        {%- assign grid_item_width = 'medium-up--one-half' -%}
+        {%- assign max_height = 530 -%}
+    {% endcase %}
+    {% for block in section.blocks %}
+      {% if section.blocks.size == 5 and forloop.index < 3 %}
+        {%- assign column_width = 'medium-up--one-half' -%}
+        {%- assign max_height = 530 -%}
+      {% else %}
+        {%- assign column_width = grid_item_width -%}
+      {% endif %}
+      <div class="grid__item {{ column_width }} text-{{ section.settings.align_text }}" {{ block.shopify_attributes }}>
+        {% if block.settings.enable_image %}
+          {% if block.settings.image != blank %}
+            {% capture img_id %}TextColumnImage-{{ block.id }}{% endcapture %}
+            {% capture wrapper_id %}TextColumnImageWrapper-{{ block.id }}{% endcapture %}
+            {%- assign img_url = block.settings.image | img_url: '1x1' | replace: '_1x1.', '_{width}x.' -%}
+            {% include 'image-style' with image: block.settings.image, width: max_height, height: max_height, small_style: true, wrapper_id: wrapper_id, img_id: img_id %}
+            <div id="{{ wrapper_id }}" class="feature-row__image-wrapper js">
+              <div style="padding-top:{{ 1 | divided_by: block.settings.image.aspect_ratio | times: 100}}%;">
+                <img id="{{ img_id }}"
+                     class="feature-row__image lazyload"
+                     src="{{ block.settings.image | img_url: '300x300' }}"
+                     data-src="{{ img_url }}"
+                     data-widths="[180, 360, 540, 720, 900, 1080, 1296, 1512, 1728, 2048]"
+                     data-aspectratio="{{ block.settings.image.aspect_ratio }}"
+                     data-sizes="auto"
+                     alt="{{ block.settings.image.alt | escape }}">
+              </div>
+            </div>
+            <noscript>
+              <p>
+                {{ block.settings.image | img_url: '480x480', scale: 2 | img_tag: block.settings.image.alt, 'feature-row__image' }}
+              </p>
+            </noscript>
+          {% else %}
+            <p>
+              {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+            </p>
+          {% endif %}
+        {% endif %}
+        {% if block.settings.title != blank %}
+          <h3 class="h4">{{ block.settings.title | escape }}</h3>
+        {% endif %}
+        {% if block.settings.text != blank %}
+          <div class="rte-setting">{{ block.settings.text }}</div>
+        {% endif %}
+        {% if block.settings.button_label != blank and block.settings.button_link != blank %}
+          <a href="{{ block.settings.button_link }}" class="btn btn--secondary btn--small">
+            {{ block.settings.button_label | escape }}
+          </a>
+        {% endif %}
+      </div>
+    {% endfor %}
+  </div>
+
+  {% if section.blocks.size == 0 %}
+    {% include 'no-blocks' %}
+  {% endif %}
+</div>
+
+
+
+{% schema %}
+{
+  "name": {
+    "de": "Textspalten mit Fotos",
+    "en": "Text columns with images",
+    "es": "Col. de texto e imágenes",
+    "fr": "Colonnes avec images",
+    "it": "Colonne di testo con foto",
+    "ja": "画像付きテキスト列",
+    "nl": "Kolom met afbeeldingen",
+    "pt-BR": "Texto com imagens",
+    "zh-CN": "带有图片的文本列",
+    "zh-TW": "附圖片的文字欄"
+  },
+  "class": "index-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": {
+        "de": "Titel",
+        "en": "Heading",
+        "es": "Título",
+        "fr": "En-tête",
+        "it": "Heading",
+        "ja": "見出し",
+        "nl": "Kop",
+        "pt-BR": "Título",
+        "zh-CN": "标题",
+        "zh-TW": "標題"
+      },
+      "default": {
+        "de": "Textspalten mit Fotos",
+        "en": "Text columns with images",
+        "es": "Col. de texto con imagen",
+        "fr": "Colonnes de texte avec images",
+        "it": "Colonne di testo con foto",
+        "ja": "画像付きテキスト列",
+        "nl": "Tekstkolommen met afbeeldingen",
+        "pt-BR": "Colunas de texto com imagens",
+        "zh-CN": "带有图片的文本列",
+        "zh-TW": "附圖片的文字欄"
+      }
+    },
+    {
+      "type": "select",
+      "id": "align_text",
+      "label": {
+        "de": "Textausrichtung",
+        "en": "Text alignment",
+        "es": "Alineación de texto",
+        "fr": "Alignement du texte",
+        "it": "Allineamento del testo",
+        "ja": "テキストアラインメント",
+        "nl": "Tekstuitlijning",
+        "pt-BR": "Alinhamento de texto",
+        "zh-CN": "文本对齐方式",
+        "zh-TW": "文字對齊"
+      },
+      "default": "left",
+      "options": [
+        {
+          "value": "left",
+          "label": {
+            "de": "Links",
+            "en": "Left",
+            "es": "Izquierda",
+            "fr": "Gauche",
+            "it": "Sinistra",
+            "ja": "左",
+            "nl": "Links",
+            "pt-BR": "Esquerda",
+            "zh-CN": "左侧",
+            "zh-TW": "左方"
+          }
+        },
+        {
+          "value": "center",
+          "label": {
+            "de": "Mittig",
+            "en": "Centered",
+            "es": "Centrado",
+            "fr": "Centré",
+            "it": "Centrato",
+            "ja": "中央揃え",
+            "nl": "Gecentreerd",
+            "pt-BR": "Centralizado",
+            "zh-CN": "居中",
+            "zh-TW": "置中"
+          }
+        }
+      ]
+    }
+  ],
+  "blocks": [
+    {
+      "type": "text_block",
+      "name": {
+        "de": "Spalte",
+        "en": "Column",
+        "es": "Columna",
+        "fr": "Colonne",
+        "it": "Colonna",
+        "ja": "列",
+        "nl": "Kolom",
+        "pt-BR": "Coluna",
+        "zh-CN": "列",
+        "zh-TW": "欄"
+      },
+      "settings": [
+        {
+          "type": "checkbox",
+          "id": "enable_image",
+          "label": {
+            "de": "Foto anzeigen",
+            "en": "Show image",
+            "es": "Mostrar imagen",
+            "fr": "Afficher l'image",
+            "it": "Mostra immagine",
+            "ja": "画像を表示する",
+            "nl": "Toon afbeelding",
+            "pt-BR": "Exibir imagem",
+            "zh-CN": "显示图片",
+            "zh-TW": "顯示圖片"
+          },
+          "default": true
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": {
+            "de": "Foto",
+            "en": "Image",
+            "es": "Imagen",
+            "fr": "Image",
+            "it": "Immagine",
+            "ja": "画像",
+            "nl": "Afbeelding",
+            "pt-BR": "Imagem",
+            "zh-CN": "图片",
+            "zh-TW": "圖片"
+          }
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": {
+            "de": "Titel",
+            "en": "Heading",
+            "es": "Título",
+            "fr": "En-tête",
+            "it": "Heading",
+            "ja": "見出し",
+            "nl": "Kop",
+            "pt-BR": "Título",
+            "zh-CN": "标题",
+            "zh-TW": "標題"
+          },
+          "default": {
+            "de": "Titel oder Text hinzufügen",
+            "en": "Add a title or tagline",
+            "es": "Agregar un título o eslogan",
+            "fr": "Ajouter un titre ou un slogan",
+            "it": "Aggiungi un titolo o una tagline",
+            "ja": "タイトルまたはタグラインを追加する",
+            "nl": "Voeg een titel of een slogan toe",
+            "pt-BR": "Adicione um título ou slogan",
+            "zh-CN": "添加标题或标语",
+            "zh-TW": "新增標題或標語"
+          }
+        },
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": {
+            "de": "Text",
+            "en": "Text",
+            "es": "Texto",
+            "fr": "Texte",
+            "it": "Testo",
+            "ja": "テキスト",
+            "nl": "Tekst",
+            "pt-BR": "Texto",
+            "zh-CN": "文本",
+            "zh-TW": "文字"
+          },
+          "default": {
+            "de": "<p>Blogposts, Produkte oder Promotions mit Ihren Kunden teilen. Nutzen Sie diesen Text, um Produkte zu beschreiben, Details zu Verfügbarkeit und Stil mitzuteilen oder als Ort, wo Reviews oder FAQs stehen.</p>",
+            "en": "<p>Share blog posts, products, or promotions with your customers. Use this text to describe products, share details on availability and style, or as a space to display recent reviews or FAQs.</p>",
+            "es": "<p>Comparte entradas de blogs, productos o promociones con tus clientes. Usa este texto para describir productos, compartir detalles sobre la disponibilidad y el estilo, o como un espacio para mostrar reseñas recientes o preguntas frecuentes.</p>",
+            "fr": "<p>Partagez des articles de blog, des produits ou des promotions avec vos clients. Utilisez ce texte pour décrire vos produits, partager des détails sur leur disponibilité ou leur style, ou encore pour afficher des FAQ et avis récents.</p>",
+            "it": "<p>Condividi articoli del blog, prodotti o promozioni con i tuoi clienti. Utilizza questo spazio per descrivere i prodotti, condividendo dettagli sulla loro disponibilità e sul loro stile, oppure per mostrare recensioni recenti o domande frequenti.</p>",
+            "ja": "<p>ブログ記事、商品、またはプロモーションをお客様に伝えます。このテキストで商品について説明し、公開状況やスタイルの詳細を共有するか、最近のレビューやFAQを表示するスペースとして使用します。</p>",
+            "nl": "<p>Deel blogposts, producten of promoties met uw klanten. Gebruik deze tekst om producten te beschrijven, details over beschikbaarheid en stijl te delen of als een ruimte om recente beoordelingen of veelgestelde vragen weer te geven.</p>",
+            "pt-BR": "<p>Compartilhe posts de blogs, produtos ou promoções com seus clientes. Use este texto para descrever produtos, compartilhar detalhes sobre disponibilidade e estilo ou como um espaço para exibir comentários recentes ou perguntas frequentes.</p>",
+            "zh-CN": "<p>与您的客户分享博客文章、产品或促销信息。使用此文本描述产品、分享有关供货情况和风格的详细信息，或将此文本作为显示最近评论或常见问题解答的区域。</p>",
+            "zh-TW": "<p>與客戶分享部落格貼文、產品或宣傳活動。請使用這段文字描述商品、分享庫存和樣式的詳細資訊，或顯示近期評論及常見問題。</p>"
+          }
+        },
+        {
+          "type": "text",
+          "id": "button_label",
+          "label": {
+            "de": "Button-Name",
+            "en": "Button label",
+            "es": "Etiqueta de botón",
+            "fr": "Texte du bouton",
+            "it": "Etichetta pulsante",
+            "ja": "ボタンラベル",
+            "nl": "Knoplabel",
+            "pt-BR": "Etiqueta do botão",
+            "zh-CN": "按钮标签",
+            "zh-TW": "按鈕標籤"
+          }
+        },
+        {
+          "type": "url",
+          "id": "button_link",
+          "label": {
+            "de": "Button-Link",
+            "en": "Button link",
+            "es": "Enlace de botón",
+            "fr": "Lien du bouton",
+            "it": "Link pulsante",
+            "ja": "ボタンリンク",
+            "nl": "Knoplink",
+            "pt-BR": "Link do botão",
+            "zh-CN": "按钮链接",
+            "zh-TW": "按鈕連結"
+          }
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": {
+        "de": "Textspalten mit Fotos",
+        "en": "Text columns with images",
+        "es": "Col. de texto con imagen",
+        "fr": "Colonnes de texte avec images",
+        "it": "Colonne di testo con foto",
+        "ja": "画像付きテキスト列",
+        "nl": "Tekstkolommen met afbeeldingen",
+        "pt-BR": "Texto com imagens",
+        "zh-CN": "带有图片的文本列",
+        "zh-TW": "附圖片的文字欄"
+      },
+      "category": {
+        "de": "Text",
+        "en": "Text",
+        "es": "Texto",
+        "fr": "Texte",
+        "it": "Testo",
+        "ja": "テキスト",
+        "nl": "Tekst",
+        "pt-BR": "Texto",
+        "zh-CN": "文本",
+        "zh-TW": "文字"
+      },
+      "blocks": [
+        {
+          "type": "text_block"
+        },
+        {
+          "type": "text_block"
+        },
+        {
+          "type": "text_block"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

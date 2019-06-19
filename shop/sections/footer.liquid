@@ -1,0 +1,569 @@
+{%- assign social_icons = false -%}
+{%- assign inline_list = false -%}
+
+{%- if
+  settings.social_twitter_link != blank
+  or settings.social_facebook_link != blank
+  or settings.social_pinterest_link != blank
+  or settings.social_instagram_link != blank
+  or settings.social_tumblr_link != blank
+  or settings.social_snapchat_link != blank
+  or settings.social_youtube_link != blank
+  or settings.social_vimeo_link != blank
+  or template.name == 'article'
+  or template.name == 'blog'
+-%}
+  {%- assign social_icons = true -%}
+{%- endif -%}
+
+{%- case section.blocks.size -%}
+  {%- when 1 -%}
+    {%- assign footer_item = 'site-footer__item--full-width' -%}
+    {%- assign inline_list = true -%}
+  {%- when 2 -%}
+    {%- assign footer_item = 'site-footer__item--one-half' -%}
+    {%- assign inline_list = true -%}
+  {%- when 3 -%}
+    {%- assign footer_item = 'site-footer__item--one-third' -%}
+    {%- for block in section.blocks -%}
+      {%- if block.type == 'newsletter' -%}
+        {%- assign footer_item = 'site-footer__item--one-quarter' -%}
+        {%- break -%}
+      {%- endif -%}
+    {%- endfor -%}
+  {%- when 4 -%}
+    {%- assign footer_item = 'site-footer__item--one-quarter' -%}
+  {%- when 5 -%}
+    {%- assign footer_item = 'site-footer__item--one-fifth' -%}
+{%- endcase -%}
+
+{% comment %} Create an appropriate hover color based on text color and brightness {% endcomment %}
+{%- assign footer_text_color = section.settings.color_footer_text -%}
+{%- assign footer_text_color_brightness = section.settings.color_footer_text | color_brightness -%}
+{%- if footer_text_color_brightness <= 26 -%}
+  {%- assign footer_text_color_hover = footer_text_color | color_lighten: 25 -%}
+{%- elsif footer_text_color_brightness <= 65 -%}
+  {%- assign footer_text_color_hover = footer_text_color | color_lighten: 15 -%}
+{%- else -%}
+  {%- assign footer_text_color_hover = footer_text_color | color_darken: 10 -%}
+{%- endif -%}
+
+<style>
+  .site-footer__hr {
+    border-bottom: 1px solid {{ section.settings.color_footer_bg | color_darken: 10 }};
+  }
+
+  .site-footer p,
+  .site-footer h4,
+  .site-footer small {
+    color: {{ section.settings.color_footer_text }};
+  }
+
+  .site-footer {
+    background-color: {{ section.settings.color_footer_bg }};
+  }
+
+  .site-footer a:hover {
+    color: {{ footer_text_color_hover }};
+  }
+</style>
+
+<footer class="site-footer" role="contentinfo">
+  <div class="page-width">
+    <div class="site-footer__content">
+      {%- for block in section.blocks -%}
+
+        <div class="site-footer__item
+                    {% if section.blocks.size == 1 %} site-footer__item--center{% endif %}
+                    {{ footer_item }}
+                    {% if block.type == 'newsletter' and section.blocks.size == 3 %}site-footer-newsletter__one-half{% endif %}"
+             {{ block.shopify_attributes }}>
+          <div class="site-footer__item-inner site-footer__item-inner--{{ block.type }}">
+
+            {%- if block.settings.title -%}
+              <p class="h4">{{ block.settings.title | escape }}</p>
+            {%- endif -%}
+
+            {%- case block.type -%}
+              {%- when 'newsletter' -%}
+                <div class="site-footer__newsletter
+                          {% if section.blocks.size == 1 %} site-footer__single-block--centered{% endif %}">
+                  {%- assign formId = 'ContactFooter' -%}
+                  {% form 'customer', id: formId, novalidate: 'novalidate' %}
+                    {%- if form.posted_successfully? -%}
+                      <p class="form-message form-message--success" tabindex="-1" data-form-status>
+                        {{ 'general.newsletter_form.confirmation' | t }}
+                      </p>
+                    {%- endif -%}
+                    <input type="hidden" name="contact[tags]" value="newsletter">
+                    <div class="input-group {% if form.errors %} input-group--error{% endif %}">
+                      <input type="email"
+                        name="contact[email]"
+                        id="{{ formId }}-email"
+                        class="input-group__field newsletter__input{% if form.errors %} input--error{% endif %}"
+                        value="{{ form.email }}"
+                        placeholder="{{ 'general.newsletter_form.email_placeholder' | t }}"
+                        aria-label="{{ 'general.newsletter_form.email_placeholder' | t }}"
+                        aria-required="true"
+                        required
+                        autocorrect="off"
+                        autocapitalize="off"
+                        {% if form.errors %}
+                          aria-invalid="true"
+                          aria-describedby="{{ formId }}-email-error"
+                          data-form-status
+                        {% endif %}>
+                      <span class="input-group__btn">
+                        <button type="submit" class="btn newsletter__submit" name="commit" id="Subscribe">
+                          <span class="newsletter__submit-text--large">{{ 'general.newsletter_form.submit' | t }}</span>
+                        </button>
+                      </span>
+                    </div>
+                    {% if form.errors contains 'email' %}
+                      <span id="{{ formId }}-email-error" class="input-error-message">
+                        {% include 'icon-error' %} {{ form.errors.translated_fields['email'] | capitalize }} {{ form.errors.messages['email'] }}.
+                      </span>
+                    {% endif %}
+                  {% endform %}
+                </div>
+
+              {%- when 'text' -%}
+                {%- if block.settings.text != blank -%}
+                  <div class="site-footer__rte
+                              {% if section.blocks.size == 1 %} site-footer__single-block--centered{% endif %}">
+                      {{ block.settings.text }}
+                  </div>
+                {%- endif -%}
+
+              {%- when 'link_list' -%}
+                {%- assign footer_linklist = block.settings.menu -%}
+                  <ul class="site-footer__linklist
+                            {% if inline_list %}list--inline{% endif %}">
+                    {%- for link in linklists[footer_linklist].links -%}
+                      <li class="site-footer__linklist-item">
+                        <a href="{{ link.url }}"
+                          {% if link.current %} aria-current="page"{% endif %}
+                        >
+                          {{ link.title | escape }}
+                        </a>
+                      </li>
+                    {%- endfor -%}
+                  </ul>
+
+            {%- endcase -%}
+
+          </div>
+        </div>
+      {%- endfor -%}
+    </div>
+  </div>
+
+  <hr class="site-footer__hr">
+
+  <div class="page-width">
+    <div class="grid grid--no-gutters small--text-center">
+      <div class="grid__item one-half small--one-whole">
+        {%- if social_icons -%}
+          <ul class="list--inline site-footer__social-icons social-icons site-footer__icon-list">
+            {%- if settings.social_facebook_link != blank -%}
+              <li>
+                <a class="social-icons__link" href="{{ settings.social_facebook_link | escape }}" aria-describedby="a11y-external-message">
+                  {%- include 'icon-facebook' -%}
+                  <span class="icon__fallback-text">Facebook</span>
+                </a>
+              </li>
+            {%- endif -%}
+            {%- if settings.social_twitter_link != blank -%}
+              <li>
+                <a class="social-icons__link" href="{{ settings.social_twitter_link | escape }}" aria-describedby="a11y-external-message">
+                  {%- include 'icon-twitter' -%}
+                  <span class="icon__fallback-text">Twitter</span>
+                </a>
+              </li>
+            {%- endif -%}
+            {%- if settings.social_pinterest_link != blank -%}
+              <li>
+                <a class="social-icons__link" href="{{ settings.social_pinterest_link | escape }}" aria-describedby="a11y-external-message">
+                  {%- include 'icon-pinterest' -%}
+                  <span class="icon__fallback-text">Pinterest</span>
+                </a>
+              </li>
+            {%- endif -%}
+            {%- if settings.social_instagram_link != blank -%}
+              <li>
+                <a class="social-icons__link" href="{{ settings.social_instagram_link | escape }}" aria-describedby="a11y-external-message">
+                  {%- include 'icon-instagram' -%}
+                  <span class="icon__fallback-text">Instagram</span>
+                </a>
+              </li>
+            {%- endif -%}
+            {%- if settings.social_tumblr_link != blank -%}
+              <li>
+                <a class="social-icons__link" href="{{ settings.social_tumblr_link | escape }}" aria-describedby="a11y-external-message">
+                  {%- include 'icon-tumblr' -%}
+                  <span class="icon__fallback-text">Tumblr</span>
+                </a>
+              </li>
+            {%- endif -%}
+            {%- if settings.social_snapchat_link != blank -%}
+              <li>
+                <a class="social-icons__link" href="{{ settings.social_snapchat_link | escape }}" aria-describedby="a11y-external-message">
+                  {%- include 'icon-snapchat' -%}
+                  <span class="icon__fallback-text">Snapchat</span>
+                </a>
+              </li>
+            {%- endif -%}
+            {%- if settings.social_youtube_link != blank -%}
+              <li>
+                <a class="social-icons__link" href="{{ settings.social_youtube_link | escape }}" aria-describedby="a11y-external-message">
+                  {%- include 'icon-youtube' -%}
+                  <span class="icon__fallback-text">YouTube</span>
+                </a>
+              </li>
+            {%- endif -%}
+            {%- if settings.social_vimeo_link != blank -%}
+              <li>
+                <a class="social-icons__link" href="{{ settings.social_vimeo_link | escape }}" aria-describedby="a11y-external-message">
+                  {%- include 'icon-vimeo' -%}
+                  <span class="icon__fallback-text">Vimeo</span>
+                </a>
+              </li>
+            {%- endif -%}
+            {%- if template.name == 'blog' or template.name == 'article' -%}
+              <li>
+                <a class="social-icons__link" href="{{ shop.url }}{{ blog.url }}.atom">
+                  {%- include 'icon-rss' -%}
+                  <span class="icon__fallback-text">RSS</span>
+                </a>
+              </li>
+            {%- endif -%}
+          </ul>
+        {%- else -%}
+          <div class="small--hide">
+            <small class="site-footer__copyright-content">&copy; {{ 'now' | date: "%Y" }}, {{ shop.name | link_to: '/' }}</small>
+            <small class="site-footer__copyright-content site-footer__copyright-content-powered-by">{{ powered_by_link }}</small>
+          </div>
+        {%- endif -%}
+      </div>
+
+      <div class="grid__item one-half small--one-whole">
+        {% if section.settings.show_payment_icons %}
+          <div class="grid__item site-footer__payment-icons">
+            {% unless shop.enabled_payment_types == empty %}
+              <span class="visually-hidden">{{ 'general.payment.method' | t }}</span>
+              <ul class="payment-icons list--inline site-footer__icon-list">
+                {% for type in shop.enabled_payment_types %}
+                  <li class="payment-icon">
+                    {{ type | payment_type_svg_tag: class: 'icon icon--full-color' }}
+                  </li>
+                {% endfor %}
+              </ul>
+            {% endunless %}
+          </div>
+        {% endif %}
+      </div>
+      <div class="grid__item{% unless social_icons %} medium-up--hide{% endunless %}">
+        <small class="site-footer__copyright-content">&copy; {{ 'now' | date: "%Y" }}, {{ shop.name | link_to: '/' }}</small>
+        <small class="site-footer__copyright-content site-footer__copyright-content--powered-by">{{ powered_by_link }}</small>
+      </div>
+    </div>
+  </div>
+</footer>
+
+
+
+{% schema %}
+{
+  "name": {
+    "de": "Fußzeile",
+    "en": "Footer",
+    "es": "Pie de página",
+    "fr": "Pied de page",
+    "it": "Footer",
+    "ja": "フッター",
+    "nl": "Voettekst",
+    "pt-BR": "Rodapé",
+    "zh-CN": "页脚",
+    "zh-TW": "頁尾"
+  },
+  "max_blocks": 4,
+  "settings": [
+    {
+      "type": "header",
+      "content": {
+        "de": "Zahlungsarten",
+        "en": "Payment methods",
+        "es": "Métodos de pago",
+        "fr": "Moyens de paiement",
+        "it": "Metodi di pagamento",
+        "ja": "お支払い方法",
+        "nl": "Betaalmethoden",
+        "pt-BR": "Formas de pagamento",
+        "zh-CN": "支付方式",
+        "zh-TW": "付款方式"
+      }
+    },
+    {
+      "type": "checkbox",
+      "id": "show_payment_icons",
+      "label": {
+        "de": "Zahlungs-Buttons anzeigen",
+        "en": "Show payment icons",
+        "es": "Mostrar iconos de pago",
+        "fr": "Afficher les icônes de paiement",
+        "it": "Mostra le icone di pagamento",
+        "ja": "支払いアイコンを表示する",
+        "nl": "Betalingspictogrammen weergeven",
+        "pt-BR": "Exibir ícones de pagamento",
+        "zh-CN": "显示付款图标",
+        "zh-TW": "顯示付款圖示"
+      },
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": {
+        "de": "Farbe",
+        "en": "Color",
+        "es": "Color",
+        "fr": "Couleur",
+        "it": "Colore",
+        "ja": "色",
+        "nl": "Kleur",
+        "pt-BR": "Cor",
+        "zh-CN": "颜色",
+        "zh-TW": "顏色"
+      }
+    },
+    {
+      "type": "color",
+      "id": "color_footer_bg",
+      "label": {
+        "de": "Hintergrundfarbe",
+        "en": "Background",
+        "es": "Fondo",
+        "fr": "Couleur de fond",
+        "it": "Sfondo",
+        "ja": "背景",
+        "nl": "Achtergrond",
+        "pt-BR": "Plano de fundo",
+        "zh-CN": "背景",
+        "zh-TW": "背景"
+      },
+      "default": "#F5F5F5"
+    },
+    {
+      "type": "color",
+      "id": "color_footer_text",
+      "label": {
+        "de": "Text",
+        "en": "Text",
+        "es": "Texto",
+        "fr": "Texte",
+        "it": "Testo",
+        "ja": "テキスト",
+        "nl": "Tekst",
+        "pt-BR": "Texto",
+        "zh-CN": "文本",
+        "zh-TW": "文字"
+      },
+      "default": "#3d4246"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "link_list",
+      "name": {
+        "de": "Menü",
+        "en": "Menu",
+        "es": "Menú",
+        "fr": "Menu",
+        "it": "Menu",
+        "ja": "メニュー",
+        "nl": "Menu",
+        "pt-BR": "Menu",
+        "zh-CN": "菜单",
+        "zh-TW": "選單"
+      },
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": {
+            "de": "Überschrift",
+            "en": "Heading",
+            "es": "Título",
+            "fr": "Titre",
+            "it": "Heading",
+            "ja": "見出し",
+            "nl": "Kop",
+            "pt-BR": "Título",
+            "zh-CN": "标题",
+            "zh-TW": "標題"
+          },
+          "default": {
+            "de": "Quick-Links",
+            "en": "Quick links",
+            "es": "Enlaces rápidos",
+            "fr": "Liens rapides",
+            "it": "Link rapidi",
+            "ja": "クイックリンク",
+            "nl": "Snelle links",
+            "pt-BR": "Links rápidos",
+            "zh-CN": "快速链接",
+            "zh-TW": "快速連結"
+          }
+        },
+        {
+          "type": "link_list",
+          "id": "menu",
+          "label": {
+            "de": "Menü",
+            "en": "Menu",
+            "es": "Menú",
+            "fr": "Menu",
+            "it": "Menu",
+            "ja": "メニュー",
+            "nl": "Menu",
+            "pt-BR": "Menu",
+            "zh-CN": "菜单",
+            "zh-TW": "選單"
+          },
+          "default": "footer"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "name": {
+        "de": "Text",
+        "en": "Text",
+        "es": "Texto",
+        "fr": "Texte",
+        "it": "Testo",
+        "ja": "テキスト",
+        "nl": "Tekst",
+        "pt-BR": "Texto",
+        "zh-CN": "文本",
+        "zh-TW": "文字"
+      },
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": {
+            "de": "Überschrift",
+            "en": "Heading",
+            "es": "Título",
+            "fr": "Titre",
+            "it": "Heading",
+            "ja": "見出し",
+            "nl": "Kop",
+            "pt-BR": "Título",
+            "zh-CN": "标题",
+            "zh-TW": "標題"
+          },
+          "default": {
+            "de": "Reden Sie über Ihr Unternehmen",
+            "en": "Talk about your business",
+            "es": "Habla sobre tu negocio",
+            "fr": "Parlez de votre entreprise",
+            "it": "Parla della tua attività commerciale",
+            "ja": "あなたのビジネスについて語る",
+            "nl": "Vertel over uw bedrijf",
+            "pt-BR": "Fale sobre o seu negócio",
+            "zh-CN": "谈论您的业务",
+            "zh-TW": "描述您的商家"
+          }
+        },
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": {
+            "de": "Text",
+            "en": "Text",
+            "es": "Texto",
+            "fr": "Texte",
+            "it": "Testo",
+            "ja": "テキスト",
+            "nl": "Tekst",
+            "pt-BR": "Texto",
+            "zh-CN": "文本",
+            "zh-TW": "文字"
+          },
+          "default": {
+            "de": "<p>Teilen Sie Ihre Shop-Details, Werbeaktionen oder Markeninhalte mit Ihren Kunden.</p>",
+            "en": "<p>Share store details, promotions, or brand content with your customers.</p>",
+            "es": "<p>Comparte detalles de la tienda, promociones o contenido de la marca con tus clientes.</p>",
+            "fr": "<p>Partagez les détails de la boutique, les promotions ou le contenu de la marque avec vos clients.</p>",
+            "it": "<p>Condividi dettagli del negozio, promozioni o contenuti del brand con i clienti.</p>",
+            "ja": "<p>ストア詳細、プロモーション、ブランドのコンテンツをお客様と共有する。</p>",
+            "nl": "<p>Deel winkeldetails, promoties of merkinhoud met uw klanten.</p>",
+            "pt-BR": "<p>Compartilhe detalhes da loja, promoções ou conteúdo da marca com seus clientes.</p>",
+            "zh-CN": "<p>与您的客户共享商店详细信息、促销信息或品牌内容。</p>",
+            "zh-TW": "<p>與客戶分享商店的詳細資訊、宣傳活動或品牌內容。</p>"
+          }
+        }
+      ]
+    },
+    {
+      "type": "newsletter",
+      "limit": 1,
+      "name": {
+        "de": "Newsletter-Anmeldung",
+        "en": "Newsletter signup",
+        "es": "Suscripción al boletín",
+        "fr": "Inscription",
+        "it": "Iscriviti alla Newsletter",
+        "ja": "メールマガジンの登録",
+        "nl": "Nieuwsbriefaanmelding",
+        "pt-BR": "Assinatura da newsletter",
+        "zh-CN": "新闻通讯注册",
+        "zh-TW": "訂閱電子報"
+      },
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": {
+            "de": "Überschrift",
+            "en": "Heading",
+            "es": "Título",
+            "fr": "Titre",
+            "it": "Heading",
+            "ja": "見出し",
+            "nl": "Kop",
+            "pt-BR": "Título",
+            "zh-CN": "标题",
+            "zh-TW": "標題"
+          },
+          "info": {
+            "de": "Abonnenten werden zu Ihrer \"akzeptiert Marketingmaterial\"-Liste hinzugefügt [Kundenliste.](/admin/customers?query=&accepts_marketing=1)",
+            "en": "Subscribers will be added to your “accepts marketing” [customer list.](/admin/customers?query=&accepts_marketing=1)",
+            "es": "Se añadirá los suscriptores a tu lista \"acepta marketing\"[lista de clients.](/admin/customers?query=&accepts_marketing=1)",
+            "fr": "Les abonnés seront ajoutés à votre [liste de clients](/admin/customers?query=&accepts_marketing=1) « Accepte le marketing ».",
+            "it": "Gli iscritti verranno aggiunti al tuo [elenco clienti](/admin/customers?query=&accepts_marketing=1) “Accetta marketing”.",
+            "ja": "購読者は「マーケティングを受け入れる」[顧客リスト](/admin/customers?query=&accepts_marketing=1)に追加されます。",
+            "nl": "Abonnees worden toegevoegd aan uw \"accepteert marketing\" [klantenlijst.](/admin/customers?query=&accepts_marketing=1)",
+            "pt-BR": "Os assinantes serão adicionados à sua lista de pessoas que “aceitam marketing” [lista de clientes.](/admin/customers?query=&accepts_marketing=1)",
+            "zh-CN": "订阅者将被添加到您的“接受营销”部分 [客户列表。](/admin/customers?query=&accepts_marketing=1)",
+            "zh-TW": "系統會將訂閱者新增至您的「接受行銷」[客戶清單。](/admin/customers?query=&accepts_marketing=1)"
+          },
+          "default": {
+            "de": "Newsletter",
+            "en": "Newsletter",
+            "es": "Boletín",
+            "fr": "Newsletter",
+            "it": "Newsletter",
+            "ja": "メールマガジン",
+            "nl": "Nieuwsbrief",
+            "pt-BR": "Newsletter",
+            "zh-CN": "新闻通讯",
+            "zh-TW": "電子報"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

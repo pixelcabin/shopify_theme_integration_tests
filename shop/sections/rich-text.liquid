@@ -1,0 +1,200 @@
+<div class="page-width rich-text">
+  <div class="grid">
+    <div class="grid__item {% unless section.settings.full_width %} medium-up--two-thirds medium-up--push-one-sixth{% endunless %}">
+      {% if section.settings.section_title != blank %}
+        <div class="rich-text__heading--{{ section.settings.text_size }} text-center">
+          <h2 class="h3">{{ section.settings.section_title | escape }}</h2>
+        </div>
+      {% endif %}
+      {% if section.settings.text != blank %}
+        <div class="rich-text__text--{{ section.settings.text_size }} rte-setting text-center">{{ section.settings.text }}</div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+
+
+{% schema %}
+{
+  "name": {
+    "de": "Rich text",
+    "en": "Rich text",
+    "es": "Texto enriquecido",
+    "fr": "Texte enrichi",
+    "it": "Rich text",
+    "ja": "リッチテキスト",
+    "nl": "Rich text",
+    "pt-BR": "Rich text",
+    "zh-CN": "富文本",
+    "zh-TW": "RTF 文字"
+  },
+  "class": "index-section",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "label": {
+        "de": "Breitbild-Display",
+        "en": "Wide display",
+        "es": "Pantalla ancha",
+        "fr": "Affichage large",
+        "it": "Visualizzazione ampia",
+        "ja": "ワイドディスプレイ",
+        "nl": "Brede weergave",
+        "pt-BR": "Exibição ampla",
+        "zh-CN": "宽显示屏",
+        "zh-TW": "寬螢幕"
+      }
+    },
+    {
+      "type": "text",
+      "id": "section_title",
+      "label": {
+        "de": "Titel",
+        "en": "Heading",
+        "es": "Título",
+        "fr": "En-tête",
+        "it": "Heading",
+        "ja": "見出し",
+        "nl": "Kop",
+        "pt-BR": "Título",
+        "zh-CN": "标题",
+        "zh-TW": "標題"
+      },
+      "default": {
+        "de": "Reden Sie über Ihre Marke",
+        "en": "Talk about your brand",
+        "es": "Habla de tu marca",
+        "fr": "Parlez de votre marque",
+        "it": "Parla del tuo brand",
+        "ja": "あなたのブランドについて語る",
+        "nl": "Vertel over uw merk",
+        "pt-BR": "Fale sobre a sua marca",
+        "zh-CN": "谈论您的品牌",
+        "zh-TW": "描述您的品牌"
+      }
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": {
+        "de": "Text",
+        "en": "Text",
+        "es": "Texto",
+        "fr": "Texte",
+        "it": "Testo",
+        "ja": "テキスト",
+        "nl": "Tekst",
+        "pt-BR": "Texto",
+        "zh-CN": "文本",
+        "zh-TW": "文字"
+      },
+      "default": {
+        "de": "<p>Nutzen Sie diesen Text, um Infos über Ihre Marke mitzuteilen. Beschreiben Sie ein Produkt, kündigen Sie etwas an oder heißen Sie Kunden willkommen.</p>",
+        "en": "<p>Use this text to share information about your brand with your customers. Describe a product, share announcements, or welcome customers to your store.</p>",
+        "es": "<p>Usa este texto para compartir información sobre tu marca con tus clientes. Describe un producto, comparte anuncios o recibe clientes en tu tienda.</p>",
+        "fr": "<p>Utilisez ce texte pour partager des informations sur votre marque. Décrivez un produit, partagez des annonces, ou souhaitez la bienvenue à vos clients.</p>",
+        "it": "<p>Utilizza questo testo per condividere le informazioni sul tuo brand con i tuoi clienti. Descrivi un prodotto, condividi gli annunci o dai il benvenuto ai clienti nel tuo negozio.</p>",
+        "ja": "<p>このテキストを使用して、あなたのブランドに関する情報をお客様と共有します。商品を説明したり、告知の共有をしたり、あるいはあなたのストアのお客様を歓迎します。</p>",
+        "nl": "<p>Gebruik deze tekst om informatie over uw merk te delen met uw klanten. Beschrijf een product, deel aankondigingen of verwelkom klanten in uw winkel.</p>",
+        "pt-BR": "<p>Use este texto para compartilhar informações sobre sua marca com seus clientes. Descreva um produto, compartilhe novidades ou receba os clientes em sua loja.</p>",
+        "zh-CN": "<p>使用此文本与您的客户分享有关您品牌的信息。描述产品、分享公告或欢迎客户访问您的商店。</p>",
+        "zh-TW": "<p>您可以用這段文字和客戶分享品牌資訊、描述產品、分享公告，或歡迎客戶光臨您的商店。</p>"
+      }
+    },
+    {
+      "type": "select",
+      "id": "text_size",
+      "label": {
+        "de": "Größe",
+        "en": "Size",
+        "es": "Tamaño",
+        "fr": "Taille",
+        "it": "Dimensione",
+        "ja": "サイズ",
+        "nl": "Grootte",
+        "pt-BR": "Tamanho",
+        "zh-CN": "大小",
+        "zh-TW": "尺寸"
+      },
+      "default": "medium",
+      "options": [
+        {
+          "label": {
+            "de": "Klein",
+            "en": "Small",
+            "es": "Pequeño",
+            "fr": "Petite",
+            "it": "Piccolo",
+            "ja": "小",
+            "nl": "Klein",
+            "pt-BR": "Pequeno",
+            "zh-CN": "小",
+            "zh-TW": "小型"
+          },
+          "value": "small"
+        },
+        {
+          "label": {
+            "de": "Mittel",
+            "en": "Medium",
+            "es": "Mediano",
+            "fr": "Moyenne",
+            "it": "Medio",
+            "ja": "中",
+            "nl": "Gemiddeld",
+            "pt-BR": "Médio",
+            "zh-CN": "中等",
+            "zh-TW": "中等"
+          },
+          "value": "medium"
+        },
+        {
+          "label": {
+            "de": "Groß",
+            "en": "Large",
+            "es": "Grande",
+            "fr": "Grande",
+            "it": "Grande",
+            "ja": "大",
+            "nl": "Groot",
+            "pt-BR": "Grande",
+            "zh-CN": "大",
+            "zh-TW": "大型"
+          },
+          "value": "large"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": {
+        "de": "Rich text",
+        "en": "Rich text",
+        "es": "Texto enriquecido",
+        "fr": "Texte enrichi",
+        "it": "Rich text",
+        "ja": "リッチテキスト",
+        "nl": "Rich text",
+        "pt-BR": "Rich text",
+        "zh-CN": "富文本",
+        "zh-TW": "RTF 文字"
+      },
+      "category": {
+        "de": "Text",
+        "en": "Text",
+        "es": "Texto",
+        "fr": "Texte",
+        "it": "Testo",
+        "ja": "テキスト",
+        "nl": "Tekst",
+        "pt-BR": "Texto",
+        "zh-CN": "文本",
+        "zh-TW": "文字"
+      }
+    }
+  ]
+}
+{% endschema %}

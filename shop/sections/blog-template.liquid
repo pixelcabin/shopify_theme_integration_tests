@@ -1,0 +1,308 @@
+{% paginate blog.articles by 12 %}
+
+<div class="page-width">
+  <header class="section-header text-center">
+    <h1>{{ page_title }}</h1>
+    {% if blog.tags.size > 0 %}
+      <div class="blog-filter">
+        <label class="blog-filter__label select-label" for="BlogTagFilter">{{ 'collections.filters.title_tags' | t }}</label>
+        <div class="select-group">
+          <select id="BlogTagFilter" aria-describedby="a11y-refresh-page-message a11y-selection-message">
+            <option value="/blogs/{{ blog.handle }}">{{ 'blogs.article.all_topics' | t }}</option>
+            {% for tag in blog.all_tags %}
+              <option value="/blogs/{{ blog.handle }}/tagged/{{ tag | handleize }}" {% if current_tags contains tag %}selected{% endif %}>{{ tag }}</option>
+            {% endfor %}
+          </select>
+          {% include 'icon-chevron-down' %}
+        </div>
+      </div>
+    {% endif %}
+  </header>
+</div>
+
+
+{% if section.settings.layout == 'grid' %}
+  <div class="page-width">
+    <ul class="grid grid--uniform grid--blog">
+      {% for article in blog.articles %}
+        <li class="grid__item medium-up--one-third">
+          <a href="{{ article.url }}" class="article__link">
+            {% if article.image %}
+              {% capture img_id %}ArticleImage-{{ article.image.id }}{% endcapture %}
+              {% capture img_wrapper_id %}ArticleImageWrapper-{{ article.image.id }}{% endcapture %}
+              {%- assign img_url = article.image | img_url: '1x1' | replace: '_1x1.', '_{width}x.' -%}
+
+              {% include 'image-style' with image: article.image, small_style: true, width: 345, height: 345, wrapper_id: img_wrapper_id, img_id: img_id %}
+              <div id="{{ img_wrapper_id }}" class="article__grid-image-wrapper js">
+                <div class="article__grid-image-container" style="padding-top:{{ 1 | divided_by: article.image.aspect_ratio | times: 100 }}%;">
+                  <img id="{{ img_id }}"
+                      class="article__grid-image lazyload"
+                      src="{{ article.image | img_url: '300x300' }}"
+                      data-src="{{ img_url }}"
+                      data-widths="[180, 360, 540, 720, 900, 1080, 1296, 1512, 1728, 2048]"
+                      data-aspectratio="{{ article.image.aspect_ratio }}"
+                      data-sizes="auto"
+                      alt="">
+                </div>
+              </div>
+              <noscript>
+                <div class="article__grid-image-wrapper">
+                  {{ article | img_url: '345x345', scale: 2 | img_tag: article.title, 'article__grid-image' }}
+                </div>
+              </noscript>
+            {% endif %}
+
+            <h2 class="article__title h3{% if article.image %} article__title--has-image{% endif %}">
+              {{ article.title | escape }}
+            </h2>
+          </a>
+
+          <div class="article__grid-meta{% if article.image %} article__grid-meta--has-image{% endif %}">
+            {% if section.settings.blog_show_author %}
+              <span class="article__author">{{ 'blogs.article.by_author' | t: author: article.author }}</span>
+            {% endif %}
+
+            {% if section.settings.blog_show_date %}
+              <span class="article__date">
+                {{ article.published_at | time_tag: format: 'date' }}
+              </span>
+            {% endif %}
+
+            <div class="rte article__grid-excerpt">
+              {% if article.excerpt.size > 0 %}
+                {{ article.excerpt }}
+              {% else %}
+                {{ article.content | strip_html | truncate: 150 }}
+              {% endif %}
+            </div>
+
+            {% if article.tags.size > 0 %}
+              <div class="article__tags rte">
+                <ul class="list--inline" aria-label="{{ 'blogs.article.tags' | t }}">
+                  {% for tag in article.tags %}
+                    <li>
+                      <a href="{{ blog.url }}/tagged/{{ tag | handle }}" class="article__grid-tag">{{ tag }}</a>
+                    </li>
+                  {% endfor %}
+                </ul>
+              </div>
+            {% endif %}
+
+            <ul class="list--inline article__meta-buttons">
+              <li>
+                <a href="{{ article.url }}" class="btn btn--tertiary btn--small" aria-label="{{ 'blogs.article.read_more_title' | t: title: article.title }}">
+                  {{ 'blogs.article.read_more' | t }}
+                </a>
+              </li>
+
+              {% if blog.comments_enabled? and article.comments_count > 0 %}
+                <li>
+                  <a href="{{ article.url }}#comments" class="article__comment-count btn btn--tertiary btn--small">
+                    {{ 'blogs.comments.comments_with_count' | t: count: article.comments_count }}
+                  </a>
+                </li>
+              {% endif %}
+            </ul>
+          </div>
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
+{% else %}
+  <ul class="blog-list-view">
+    {% for article in blog.articles %}
+      <li class="border-top">
+        <div class="page-width">
+          <div class="grid">
+            <div class="grid__item medium-up--five-sixths medium-up--push-one-twelfth">
+              <div class="article-listing">
+                <h2 class="article__title h3"><a href="{{ article.url }}">{{ article.title }}</a></h2>
+                {% if section.settings.blog_show_author %}
+                  <span class="article__author">{{ 'blogs.article.by_author' | t: author: article.author }}</span>
+                {% endif %}
+
+                {% if section.settings.blog_show_date %}
+                  <span class="article__date">
+                    {{ article.published_at | time_tag: format: 'date' }}
+                  </span>
+                {% endif %}
+
+                {% if article.image %}
+                  {% capture img_id %}ArticleImage-{{ article.image.id }}{% endcapture %}
+                  {% capture img_wrapper_id %}ArticleImageWrapper-{{ article.image.id }}{% endcapture %}
+                  {%- assign img_url = article.image | img_url: '1x1' | replace: '_1x1.', '_{width}x.' -%}
+
+                  {% include 'image-style' with image: article.image, small_style: false, width: 905, height: 600, wrapper_id: img_wrapper_id, img_id: img_id %}
+
+                  <div id="{{ img_wrapper_id }}" class="article__list-image-wrapper js">
+                    <a href="{{ article.url }}" style="padding-top:{{ 1 | divided_by: article.image.aspect_ratio | times: 100 }}%;" class="article__list-image-container">
+                      <img id="{{ img_id }}"
+                           class="article__list-image lazyload"
+                           src="{{ article.image | img_url: '300x300' }}"
+                           data-src="{{ img_url }}"
+                           data-widths="[180, 360, 540, 720, 905, 1090, 1296, 1512, 1728, 2048]"
+                           data-aspectratio="{{ article.image.aspect_ratio }}"
+                           data-sizes="auto"
+                           alt="">
+                    </a>
+                  </div>
+
+                  <noscript>
+                    <p>
+                      <a href="{{ article.url }}">
+                        {{ article | img_url: '455x300', scale: 2 | img_tag: article.title }}
+                      </a>
+                    </p>
+                  </noscript>
+                {% endif %}
+
+                <div class="rte">
+                  {% if article.excerpt.size > 0 %}
+                    {{ article.excerpt }}
+                  {% else %}
+                    {{ article.content | strip_html | truncate: 150 }}
+                  {% endif %}
+                </div>
+
+                {% if article.tags.size > 0 %}
+                  <div class="article__tags article__tags--list rte">
+                    {{ 'blogs.article.posted_in' | t }}
+                    {% for tag in article.tags %}
+                      <a href="{{ blog.url }}/tagged/{{ tag | handle }}">{{ tag }}</a>{% unless forloop.last %}, {% endunless %}
+                    {% endfor %}
+                  </div>
+                {% endif %}
+
+                <ul class="list--inline article__meta-buttons">
+                  <li>
+                    <a href="{{ article.url }}" class="btn btn--tertiary btn--small" aria-label="{{ 'blogs.article.read_more_title' | t: title: article.title }}">
+                      {{ 'blogs.article.read_more' | t }}
+                    </a>
+                  </li>
+
+                  {% if blog.comments_enabled? and article.comments_count > 0 %}
+                    <li>
+                      <a href="{{ article.url }}#comments" class="article__comment-count btn btn--tertiary btn--small">
+                        {{ 'blogs.comments.comments_with_count' | t: count: article.comments_count }}
+                      </a>
+                    </li>
+                  {% endif %}
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </li>
+    {% endfor %}
+  </ul>
+{% endif %}
+
+{% if paginate.pages > 1 %}
+  {% include 'pagination' %}
+{% endif %}
+
+{% endpaginate %}
+
+
+
+{% schema %}
+{
+  "name": {
+    "de": "Blogseiten",
+    "en": "Blog pages",
+    "es": "Páginas del blog",
+    "fr": "Pages du blog",
+    "it": "Pagine del blog",
+    "ja": "ブログページ",
+    "nl": "Blogpagina's",
+    "pt-BR": "Páginas do blog",
+    "zh-CN": "博客页面",
+    "zh-TW": "部落格頁面"
+  },
+  "settings": [
+    {
+      "type": "select",
+      "id": "layout",
+      "label": {
+        "de": "Layout",
+        "en": "Layout",
+        "es": "Diseño",
+        "fr": "Mise en page",
+        "it": "Layout",
+        "ja": "レイアウト",
+        "nl": "Indeling",
+        "pt-BR": "Layout",
+        "zh-CN": "布局",
+        "zh-TW": "版面配置"
+      },
+      "default": "list",
+      "options": [
+        {
+          "value": "grid",
+          "label": {
+            "de": "Raster",
+            "en": "Grid",
+            "es": "Cuadrícula",
+            "fr": "Grille",
+            "it": "Griglia",
+            "ja": "グリッド",
+            "nl": "Raster",
+            "pt-BR": "Grade",
+            "zh-CN": "网格",
+            "zh-TW": "網格"
+          }
+        },
+        {
+          "value": "list",
+          "label": {
+            "de": "Liste",
+            "en": "List",
+            "es": "Lista",
+            "fr": "Liste",
+            "it": "Elenco",
+            "ja": "リスト",
+            "nl": "Lijst",
+            "pt-BR": "Lista",
+            "zh-CN": "列表",
+            "zh-TW": "清單"
+          }
+        }
+      ]
+    },
+    {
+      "type": "checkbox",
+      "id": "blog_show_author",
+      "label": {
+        "de": "Autor anzeigen",
+        "en": "Show author",
+        "es": "Mostrar autor",
+        "fr": "Afficher l'auteur",
+        "it": "Mostra autore",
+        "ja": "執筆者を表示する",
+        "nl": "Auteur weergeven",
+        "pt-BR": "Exibir autor(a)",
+        "zh-CN": "显示作者",
+        "zh-TW": "顯示作者"
+      },
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "blog_show_date",
+      "label": {
+        "de": "Datum anzeigen",
+        "en": "Show date",
+        "es": "Mostrar fecha",
+        "fr": "Afficher la date",
+        "it": "Mostra data",
+        "ja": "日付を表示する",
+        "nl": "Datum weergeven",
+        "pt-BR": "Exibir data",
+        "zh-CN": "显示日期",
+        "zh-TW": "顯示日期"
+      },
+      "default": true
+    }
+  ]
+}
+{% endschema %}

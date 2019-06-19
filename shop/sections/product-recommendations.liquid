@@ -1,0 +1,115 @@
+{%- if section.settings.show_product_recommendations -%}
+  {%- if recommendations.performed -%}
+    {%- if recommendations.products_count > 0 -%}
+      <div class="product-recommendations__inner">
+        {%- if section.settings.heading != blank -%}
+          <div class="section-header text-center">
+            <h2>{{ section.settings.heading | escape }}</h2>
+          </div>
+        {%- endif -%}
+        <ul class="grid grid--uniform grid--view-items">
+          {%- for product in recommendations.products -%}
+            <li class="grid__item small--one-half medium-up--one-quarter">
+              {% include 'product-card-grid', max_height: 250 %}
+            </li>
+          {%- endfor -%}
+        </ul>
+      </div>
+    {%- endif -%}
+  {%- else  -%}
+    <div class="page-width" data-product-id="{{ product.id }}" data-section-id="{{ section.id }}" data-section-type="product-recommendations"></div>
+  {%- endif -%}
+{%- endif -%}
+
+{% schema %}
+{
+  "name": {
+    "de": "Produktempfehlungen",
+    "en": "Product recommendations",
+    "es": "Recomendaciones de productos",
+    "fr": "Recommandations de produits",
+    "it": "Raccomandazioni sui prodotti",
+    "ja": "商品の推奨",
+    "nl": "Productaanbevelingen",
+    "pt-BR": "Recomendações de produtos",
+    "zh-CN": "产品推荐",
+    "zh-TW": "商品推薦"
+  },
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_product_recommendations",
+      "label": {
+        "de": "Dynamische Empfehlungen anzeigen",
+        "en": "Show dynamic recommendations",
+        "es": "Mostrar recomendaciones dinámicas",
+        "fr": "Afficher les recommandations dynamiques",
+        "it": "Mostra raccomandazioni dinamiche",
+        "ja": "動的推奨を表示する",
+        "nl": "Dynamische aanbevelingen weergeven",
+        "pt-BR": "Mostrar recomendações dinâmicas",
+        "zh-CN": "显示动态推荐",
+        "zh-TW": "顯示動態推薦"
+      },
+      "info": {
+        "de": "Dynamische Empfehlungen werden im Laufe der Zeit angepasst und verbessert. [Mehr Informationen](https://help.shopify.com/en/themes/development/recommended-products)",
+        "en": "Dynamic recommendations change and improve with time. [Learn more](https://help.shopify.com/en/themes/development/recommended-products)",
+        "es": "Las recomendaciones dinámicas cambian y mejoran con el tiempo. [Más información](https://help.shopify.com/en/themes/development/recommended-products)",
+        "fr": "Les recommandations dynamiques changent et s'améliorent avec le temps. [En savoir plus](https://help.shopify.com/en/themes/development/recommended-products)",
+        "it": "Le raccomandazioni dinamiche cambiano e migliorano nel tempo. [Maggiori informazioni](https://help.shopify.com/en/themes/development/recommended-products)",
+        "ja": "動的推奨は時間とともに変化し改善します。[詳細情報](https://help.shopify.com/en/themes/development/recommended-products)",
+        "nl": "Dynamische aanbevelingen veranderen en verbeteren mettertijd. [Meer informatie](https://help.shopify.com/en/themes/development/recommended-products)",
+        "pt-BR": "As recomendações dinâmicas mudam e melhoram com o tempo. [Saiba mais](https://help.shopify.com/en/themes/development/recommended-products)",
+        "zh-CN": "动态推荐会随着时间而变化和改进。[了解详情](https://help.shopify.com/en/themes/development/recommended-products)",
+        "zh-TW": "動態推薦會隨著時間改變與改進。[深入瞭解](https://help.shopify.com/en/themes/development/recommended-products)"
+      },
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": {
+        "de": "Überschrift",
+        "en": "Heading",
+        "es": "Título",
+        "fr": "En-tête",
+        "it": "Heading",
+        "ja": "見出し",
+        "nl": "Kop",
+        "pt-BR": "Título",
+        "zh-CN": "标题",
+        "zh-TW": "標題"
+      },
+      "default": {
+        "de": "Das könnte Ihnen auch gefallen",
+        "en": "You may also like",
+        "es": "También te puede interesar",
+        "fr": "Vous pourriez aimer également",
+        "it": "Potrebbero interessarti anche",
+        "ja": "あなたへのおすすめ",
+        "nl": "Wellicht vindt u dit ook leuk",
+        "pt-BR": "Talvez você também goste de",
+        "zh-CN": "您可能还喜欢",
+        "zh-TW": "您也可能喜歡"
+      }
+    },
+    {
+      "type": "checkbox",
+      "id": "show_vendor",
+      "label": {
+        "de": "Lieferanten anzeigen",
+        "en": "Show vendor",
+        "es": "Mostrar proveedor",
+        "fr": "Afficher les vendeurs",
+        "it": "Mostra fornitore",
+        "ja": "販売元を表示する",
+        "nl": "Leverancier weergeven",
+        "pt-BR": "Exibir fornecedor",
+        "zh-CN": "显示厂商",
+        "zh-TW": "顯示廠商"
+      },
+      "default": false
+    }
+  ]
+}
+{% endschema %}

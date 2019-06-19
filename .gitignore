@@ -1,0 +1,9 @@
+/.idea
+/.sass-cache
+/node_modules
+credentials.json
+/temp
+/coverage
+/public/theme.zip
+.DS_Store
+*.swp

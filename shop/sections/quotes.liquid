@@ -1,0 +1,196 @@
+<div class="page-width" data-section-id="{{ section.id }}" data-section-type="quotes">
+  {% if section.settings.title != blank %}
+    <div class="section-header text-center">
+      <h2>{{ section.settings.title | escape }}</h2>
+    </div>
+  {% endif %}
+
+  {% if section.blocks.size > 0 %}
+    <div class="quotes-wrapper">
+      <div class="quotes-slider" id="Quotes-{{ section.id }}" data-count="{{ section.blocks.size }}">
+        {% for block in section.blocks %}
+          <div class="quotes-slide--{{ block.id }}" {{ block.shopify_attributes }}>
+            <blockquote class="quotes-slider__text text-center">
+              <span class="quote-icon">{% include 'icon-quote' %}</span>
+              {% if block.settings.quote != blank %}
+                <div class="rte-setting rte">{{ block.settings.quote }}</div>
+              {% endif %}
+              {% if block.settings.author != blank %}
+                <cite>{{ block.settings.author | escape }}</cite>
+              {% endif %}
+            </blockquote>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  {% endif %}
+
+  {% if section.blocks.size == 0 %}
+    {% include 'no-blocks' %}
+  {% endif %}
+</div>
+
+
+
+{% schema %}
+{
+  "name": {
+    "de": "Testimonials",
+    "en": "Testimonials",
+    "es": "Testimonios",
+    "fr": "Témoignages",
+    "it": "Testimonial",
+    "ja": "お客様の声",
+    "nl": "Getuigenissen",
+    "pt-BR": "Depoimentos",
+    "zh-CN": "感言",
+    "zh-TW": "推薦文"
+  },
+  "class": "index-section",
+  "max_blocks": 9,
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": {
+        "de": "Titel",
+        "en": "Heading",
+        "es": "Título",
+        "fr": "En-tête",
+        "it": "Heading",
+        "ja": "見出し",
+        "nl": "Kop",
+        "pt-BR": "Título",
+        "zh-CN": "标题",
+        "zh-TW": "標題"
+      },
+      "default": {
+        "de": "Testimonials",
+        "en": "Testimonials",
+        "es": "Testimonios",
+        "fr": "Témoignages",
+        "it": "Testimonial",
+        "ja": "お客様の声",
+        "nl": "Getuigenissen",
+        "pt-BR": "Depoimentos",
+        "zh-CN": "感言",
+        "zh-TW": "推薦文"
+      }
+    }
+  ],
+  "blocks": [
+    {
+      "type": "quote",
+      "name": {
+        "de": "Testimonial",
+        "en": "Testimonial",
+        "es": "Testimonio",
+        "fr": "Témoignages",
+        "it": "Testimonial",
+        "ja": "お客様の声",
+        "nl": "Testimonial",
+        "pt-BR": "Depoimento",
+        "zh-CN": "感言",
+        "zh-TW": "推薦文"
+      },
+      "settings": [
+        {
+          "type": "richtext",
+          "id": "quote",
+          "label": {
+            "de": "Text",
+            "en": "Text",
+            "es": "Texto",
+            "fr": "Texte",
+            "it": "Testo",
+            "ja": "テキスト",
+            "nl": "Tekst",
+            "pt-BR": "Texto",
+            "zh-CN": "文本",
+            "zh-TW": "文字"
+          },
+          "default": {
+            "de": "<p>Kunden-Reviews und Testimonials, die Kundenzufriedenheit beweisen.</p>",
+            "en": "<p>Add customer reviews and testimonials to showcase your store’s happy customers.</p>",
+            "es": "<p>Agrega las reseñas y los testimonios de los clientes para mostrar a los clientes satisfechos de tu tienda.</p>",
+            "fr": "<p>Ajoutez des avis et témoignages pour mettre en avant vos clients satisfaits.</p>",
+            "it": "<p>Aggiungi recensioni e testimonianze sul tuo negozio per dimostrare che i clienti sono soddisfatti.</p>",
+            "ja": "<p>あなたのストアの幸せなお客様を紹介するために、カスタマーレビューとお客様の声を追加してください。</p>",
+            "nl": "<p>Voeg beoordelingen van klanten en testimonials toe om te laten zien dat uw klanten tevreden zijn.</p>",
+            "pt-BR": "<p>Adicione comentários e depoimentos de clientes para destacar os clientes felizes da sua loja.</p>",
+            "zh-CN": "<p>添加客户评论和感言，以展示对您的商店满意的客户。</p>",
+            "zh-TW": "<p>新增客戶評論和推薦文，展示對您商店滿意之客戶。</p>"
+          }
+        },
+        {
+          "type": "text",
+          "id": "author",
+          "label": {
+            "de": "Autor",
+            "en": "Author",
+            "es": "Autor",
+            "fr": "Auteur",
+            "it": "Autore",
+            "ja": "執筆者",
+            "nl": "Auteur",
+            "pt-BR": "Autoria",
+            "zh-CN": "作者",
+            "zh-TW": "作者"
+          },
+          "default": {
+            "de": "Name des Autors",
+            "en": "Author's name",
+            "es": "Nombre del autor",
+            "fr": "Nom de l'auteur",
+            "it": "Nome dell'autore",
+            "ja": "筆者の名前",
+            "nl": "Naam auteur",
+            "pt-BR": "Nome do(a) autor(a)",
+            "zh-CN": "作者姓名",
+            "zh-TW": "作者名稱"
+          }
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": {
+        "de": "Testimonials",
+        "en": "Testimonials",
+        "es": "Testimonios",
+        "fr": "Témoignages",
+        "it": "Testimonial",
+        "ja": "お客様の声",
+        "nl": "Getuigenissen",
+        "pt-BR": "Depoimentos",
+        "zh-CN": "感言",
+        "zh-TW": "推薦文"
+      },
+      "category": {
+        "de": "Text",
+        "en": "Text",
+        "es": "Texto",
+        "fr": "Texte",
+        "it": "Testo",
+        "ja": "テキスト",
+        "nl": "Tekst",
+        "pt-BR": "Texto",
+        "zh-CN": "文本",
+        "zh-TW": "文字"
+      },
+      "blocks": [
+        {
+          "type": "quote"
+        },
+        {
+          "type": "quote"
+        },
+        {
+          "type": "quote"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

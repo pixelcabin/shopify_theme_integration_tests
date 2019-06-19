@@ -1,0 +1,28 @@
+{
+  "name": "shopify_theme_integration_tests",
+  "description": "Example repo showing how to configure Cypress and Travis for Shopify",
+  "license": "MIT",
+  "version": "1.0.0",
+  "author": "Pixelcabin",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pixelcabin/shopify_theme_integration_tests"
+  },
+  "scripts": {
+    "start": "npm run watch",
+    "upload": "grunt shopify:upload",
+    "watch": "grunt watch",
+    "cypress:open": "cypress open"
+  },
+  "devDependencies": {
+    "cypress": "~3.2.0",
+    "growl": "^1.10.5",
+    "grunt": "~1.0.1",
+    "grunt-cli": "^1.2.0",
+    "grunt-concurrent": "^2.3.1",
+    "grunt-contrib-watch": "^1.1.0",
+    "grunt-exec": "^1.0.1",
+    "grunt-shopify": "github:michaelrshannon/grunt-shopify#zip-upload",
+    "grunt-zip": "^0.18.2"
+  }
+}

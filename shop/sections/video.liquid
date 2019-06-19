@@ -1,0 +1,578 @@
+{%- case section.settings.height -%}
+  {%- when 'small' -%}
+    {%- assign mobile_height = 175 -%}
+    {%- assign desktop_height = 475 -%}
+  {%- when 'medium' -%}
+    {%- assign mobile_height = 270 -%}
+    {%- assign desktop_height = 650 -%}
+  {%- when 'large' -%}
+    {%- assign mobile_height = 375 -%}
+    {%- assign desktop_height = 775 -%}
+{%- endcase -%}
+
+{%- if section.settings.image == blank -%}
+  {% style %}
+    @media screen and (max-width: 749px) {
+      .video-section-wrapper--{{ section.id }} .video__image {
+        opacity: 0;
+      }
+    }
+  {% endstyle %}
+{%- endif -%}
+<div class="page-width" data-section-id="{{ section.id }}" data-section-type="video-section">
+  {%- if section.settings.video_link != blank -%}
+    <div class="video-section-wrapper
+                video-section-wrapper--{{ section.settings.height }}
+                video-section-wrapper--min-height
+                {% if section.settings.style == 'background' %} video-background-wrapper
+                  {% unless section.settings.show_overlay %} video-background-wrapper--no-overlay{% endunless %}
+                {% endif %}
+                video-section-wrapper--{{ section.id }}"
+                data-desktop-height="{{ desktop_height }}"
+                data-mobile-height="{{ mobile_height }}">
+      {%- if section.settings.show_overlay -%}<div class="video__overlay"></div>{%- endif -%}
+      <button type="button"
+              class="text-link video-control__close-wrapper
+              {% if section.settings.style == 'background' %} video-control__close-background{% endif %}"
+              data-controls="Video-{{ section.id }}">
+        <span class="video-control video-control__close">
+          {% include 'icon-close' %}
+          <span class="icon__fallback-text">{{ 'sections.video.close' | t }}</span>
+        </span>
+      </button>
+      {%- if section.settings.video_link != blank -%}
+        <div id="Video-{{ section.id }}"
+            class="video{% if section.settings.style == 'background' %} video--background{% endif %}
+            video--{{ section.settings.style }}"
+            data-id="{{ section.settings.video_link.id }}"
+            data-type="{{ section.settings.style }}"></div>
+      {%- endif -%}
+
+      {%- if section.settings.image == blank -%}
+        <div class="video__image js">
+          <div class="placeholder-background">
+            {% capture current %}{% cycle 1, 2 %}{% endcapture %}
+            {{ 'lifestyle-' | append: current | placeholder_svg_tag: 'placeholder-svg' }}
+          </div>
+        </div>
+      {%- else -%}
+        <div class="video__image box ratio-container lazyload js"
+              data-bgset="{% include 'bgset', image: section.settings.image %}"
+              data-sizes="auto"
+              data-parent-fit="contain"
+              style="background-position: {{ section.settings.image_position }};
+                    background-image: url('{{ section.settings.image | img_url: '300x300' }}');">
+        </div>
+      {%- endif -%}
+
+      <noscript>
+        <div class="video__image"{% if section.settings.image %} style="background-image: url('{{ section.settings.image | img_url: '2048x' }}'); background-position: {{ section.settings.image_position }};"{% endif %}>
+          {%- if section.settings.image == blank -%}
+            <div class="placeholder-background">
+              {% capture current %}{% cycle 1, 2 %}{% endcapture %}
+              {{ 'lifestyle-' | append: current | placeholder_svg_tag: 'placeholder-svg' }}
+            </div>
+          {%- endif -%}
+        </div>
+      </noscript>
+
+      <div class="video__text-content text-center">
+        <div class="page-width">
+          {%- unless section.settings.video_title == blank -%}
+            <h2 class="h1 mega-title video__title{% if section.settings.text_size == 'large' %} mega-title--large{% endif %}">
+              {{ section.settings.video_title | escape }}
+            </h2>
+          {%- endunless -%}
+
+          {%- unless section.settings.style == 'background' -%}
+            <div class="video-control__play-wrapper{% if section.settings.video_title != blank %} video-control__play-wrapper--with-text{% endif %}">
+              {%- if section.settings.video_link != blank -%}
+                <div class="video-play-loader"></div>
+              {%- endif -%}
+              <button type="button" class="btn video-control video-control__play" data-controls="Video-{{ section.id }}">
+                {% include 'icon-play' %}
+                <span class="icon__fallback-text">{{ 'sections.video.play' | t }}</span>
+              </button>
+            </div>
+          {%- endunless -%}
+        </div>
+      </div>
+
+      <div class="video-control__play-wrapper-mobile">
+        {%- if section.settings.video_link != blank -%}
+          <div class="video-play-loader"></div>
+        {%- endif -%}
+        <button type="button" class="btn video-control video-control__play" data-controls="Video-{{ section.id }}">
+          {%- include 'icon-play' -%}
+          <span class="icon__fallback-text">{{ 'sections.video.play' | t }}</span>
+        </button>
+      </div>
+
+      <button type="button" class="video__pause{% unless section.settings.style == 'background' %} visually-hidden" tabindex="-1{% endunless %}" data-id="{{ section.id }}" aria-live="polite" aria-pressed="false" data-controls="Video-{{ section.id }}">
+        <span class="video__pause-stop">
+          {% include 'icon-pause' %}
+          <span class="icon__fallback-text">{{ 'sections.video.pause' | t }}</span>
+        </span>
+        <span class="video__pause-resume">
+          {% include 'icon-play' %}
+          <span class="icon__fallback-text">{{ 'sections.video.resume' | t }}</span>
+        </span>
+      </button>
+    </div>
+  {%- else -%}
+    <div class="placeholder-noblocks">
+      {{ 'homepage.onboarding.no_content' | t }}
+    </div>
+  {%- endif -%}
+</div>
+
+{% schema %}
+{
+  "name": {
+    "de": "Video",
+    "en": "Video",
+    "es": "Video",
+    "fr": "Vidéo",
+    "it": "Video",
+    "ja": "動画",
+    "nl": "Video",
+    "pt-BR": "Vídeo",
+    "zh-CN": "视频",
+    "zh-TW": "影片"
+  },
+  "class": "index-section video-section",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": {
+        "de": "Titelbild",
+        "en": "Cover image",
+        "es": "Imagen de portada",
+        "fr": "Image de couverture",
+        "it": "Immagine di copertina",
+        "ja": "表紙画像",
+        "nl": "Coverafbeelding",
+        "pt-BR": "Imagem de capa",
+        "zh-CN": "封面图片",
+        "zh-TW": "封面圖片"
+      },
+      "info": {
+        "de": "Wird immer auf Mobilgeräten angezeigt",
+        "en": "Always shown on mobile devices",
+        "es": "Mostrar siempre dispositivos móviles",
+        "fr": "S'affiche toujours sur les appareils mobiles",
+        "it": "Sempre visualizzata sui dispositivi mobili",
+        "ja": "常にモバイル端末に表示",
+        "nl": "Altijd weergeven op mobiele apparaten",
+        "pt-BR": "Sempre mostrado em dispositivos móveis",
+        "zh-CN": "始终在移动设备上显示",
+        "zh-TW": "一律在行動裝置上顯示"
+      }
+    },
+    {
+      "type": "select",
+      "id": "image_position",
+      "label": {
+        "de": "Fotoausrichtung",
+        "en": "Image alignment",
+        "es": "Alineación de imagen",
+        "fr": "Alignement de l'image",
+        "it": "Allineamento immagine",
+        "ja": "画像アラインメント",
+        "nl": "Afbeelding uitlijnen",
+        "pt-BR": "Alinhamento da imagem",
+        "zh-CN": "图片对齐方式",
+        "zh-TW": "圖片對齊"
+      },
+      "default": "center center",
+      "options": [
+        {
+          "label": {
+            "de": "Oben links",
+            "en": "Top left",
+            "es": "Superior izquierda",
+            "fr": "En haut à gauche",
+            "it": "In alto a sinistra",
+            "ja": "左上",
+            "nl": "Linksboven",
+            "pt-BR": "Superior esquerdo",
+            "zh-CN": "左上方",
+            "zh-TW": "左上角"
+          },
+          "value": "left top"
+        },
+        {
+          "label": {
+            "de": "Oben Mitte",
+            "en": "Top center",
+            "es": "Superior al centro",
+            "fr": "En haut au centre",
+            "it": "In alto al centro",
+            "ja": "中央上",
+            "nl": "Midden boven",
+            "pt-BR": "Superior centro",
+            "zh-CN": "顶部居中",
+            "zh-TW": "中央上方"
+          },
+          "value": "center top"
+        },
+        {
+          "label": {
+            "de": "Oben rechts",
+            "en": "Top right",
+            "es": "Superior derecha",
+            "fr": "En haut à droite",
+            "it": "In alto a destra",
+            "ja": "右上",
+            "nl": "Rechtsboven",
+            "pt-BR": "Superior direito",
+            "zh-CN": "右上方",
+            "zh-TW": "右上角"
+          },
+          "value": "right top"
+        },
+        {
+          "label": {
+            "de": "Mitte links",
+            "en": "Middle left",
+            "es": "Al medio a la izquierda",
+            "fr": "Au milieu à gauche",
+            "it": "Nel mezzo a sinistra",
+            "ja": "中央左",
+            "nl": "Midden links",
+            "pt-BR": "Meio esquerdo",
+            "zh-CN": "中间居左",
+            "zh-TW": "中央左方"
+          },
+          "value": "left center"
+        },
+        {
+          "label": {
+            "de": "Mitte mittig",
+            "en": "Middle center",
+            "es": "Al medio al centro",
+            "fr": "Centrée au milieu",
+            "it": "In mezzo",
+            "ja": "中央中",
+            "nl": "Midden centrum",
+            "pt-BR": "Meio centro",
+            "zh-CN": "中间居中",
+            "zh-TW": "正中央"
+          },
+          "value": "center center"
+        },
+        {
+          "label": {
+            "de": "Mitte rechts",
+            "en": "Middle right",
+            "es": "Al medio a la derecha",
+            "fr": "Au milieu à droite",
+            "it": "Nel mezzo a destra",
+            "ja": "中央右",
+            "nl": "Midden rechts",
+            "pt-BR": "Meio direito",
+            "zh-CN": "中间居右",
+            "zh-TW": "中央右方"
+          },
+          "value": "right center"
+        },
+        {
+          "label": {
+            "de": "Unten links",
+            "en": "Bottom left",
+            "es": "Inferior izquierda",
+            "fr": "En bas à gauche",
+            "it": "In basso a sinistra",
+            "ja": "左下",
+            "nl": "Linksonder",
+            "pt-BR": "Inferior esquerdo",
+            "zh-CN": "左下方",
+            "zh-TW": "左下角"
+          },
+          "value": "left bottom"
+        },
+        {
+          "label": {
+            "de": "Unten mittig",
+            "en": "Bottom center",
+            "es": "Inferior al centro",
+            "fr": "En bas au centre",
+            "it": "In basso al centro",
+            "ja": "中央下",
+            "nl": "Midden onder",
+            "pt-BR": "Inferior centro",
+            "zh-CN": "底部居中",
+            "zh-TW": "中央下方"
+          },
+          "value": "center bottom"
+        },
+        {
+          "label": {
+            "de": "Unten rechts",
+            "en": "Bottom right",
+            "es": "Inferior derecha",
+            "fr": "En bas à droite",
+            "it": "In basso a destra",
+            "ja": "右下",
+            "nl": "Rechtsonder",
+            "pt-BR": "Inferior direito",
+            "zh-CN": "右下方",
+            "zh-TW": "右下角"
+          },
+          "value": "right bottom"
+        }
+      ]
+    },
+    {
+      "type": "video_url",
+      "id": "video_link",
+      "label": {
+        "de": "Video-Link",
+        "en": "Video link",
+        "es": "Enlace de video",
+        "fr": "Lien de la vidéo",
+        "it": "Link video",
+        "ja": "ビデオリンク",
+        "nl": "Videolink",
+        "pt-BR": "Link do vídeo",
+        "zh-CN": "视频链接",
+        "zh-TW": "影片連結"
+      },
+      "accept": [
+        "youtube"
+      ],
+      "default": "https://www.youtube.com/watch?v=_9VUPq3SxOc"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_overlay",
+      "label": {
+        "de": "Überlagerung zeigen",
+        "en": "Show overlay",
+        "es": "Mostrar superposición",
+        "fr": "Afficher la superposition",
+        "it": "Mostra sovrapposizione",
+        "ja": "オーバーレイを表示する",
+        "nl": "Overlay weergeven",
+        "pt-BR": "Exibir sobreposição",
+        "zh-CN": "显示叠加",
+        "zh-TW": "顯示疊加層"
+      },
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "style",
+      "label": {
+        "de": "Stil",
+        "en": "Style",
+        "es": "Estilo",
+        "fr": "Style",
+        "it": "Stile",
+        "ja": "スタイル",
+        "nl": "Stijl",
+        "pt-BR": "Estilo",
+        "zh-CN": "样式",
+        "zh-TW": "樣式"
+      },
+      "default": "image_with_play",
+      "options": [
+        {
+          "label": {
+            "de": "Foto mit Play Button",
+            "en": "Image with play button",
+            "es": "Imagen con el botón de reproducir",
+            "fr": "Image avec bouton de lecture",
+            "it": "Immagine con pulsante play",
+            "ja": "再生ボタン付き画像",
+            "nl": "Afbeelding met knop afspelen",
+            "pt-BR": "Imagem com botão de reprodução",
+            "zh-CN": "带播放按钮的图片",
+            "zh-TW": "附播放按鈕的圖片"
+          },
+          "value": "image_with_play"
+        },
+        {
+          "label": {
+            "de": "Hintergrund-Video",
+            "en": "Background video",
+            "es": "Video de fondo",
+            "fr": "Vidéo d'arrière-plan",
+            "it": "Video in background",
+            "ja": "背景ビデオ",
+            "nl": "Achtergrondvideo",
+            "pt-BR": "Vídeo de fundo",
+            "zh-CN": "背景视频",
+            "zh-TW": "背景影片"
+          },
+          "value": "background"
+        }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "height",
+      "label": {
+        "de": "Videohöhe",
+        "en": "Video height",
+        "es": "Altura del video",
+        "fr": "Hauteur de la vidéo",
+        "it": "Altezza video",
+        "ja": "ビデオの高さ",
+        "nl": "Videohoogte",
+        "pt-BR": "Altura do vídeo",
+        "zh-CN": "视频高度",
+        "zh-TW": "影片高度"
+      },
+      "default": "medium",
+      "options": [
+        {
+          "label": {
+            "de": "Klein",
+            "en": "Small",
+            "es": "Pequeña",
+            "fr": "Petit",
+            "it": "Piccolo",
+            "ja": "スモール",
+            "nl": "Klein",
+            "pt-BR": "Pequeno",
+            "zh-CN": "小",
+            "zh-TW": "小型"
+          },
+          "value": "small"
+        },
+        {
+          "label": {
+            "de": "Mittel",
+            "en": "Medium",
+            "es": "Mediana",
+            "fr": "Moyen",
+            "it": "Medio",
+            "ja": "中",
+            "nl": "Gemiddeld",
+            "pt-BR": "Médio",
+            "zh-CN": "中等",
+            "zh-TW": "中等"
+          },
+          "value": "medium"
+        },
+        {
+          "label": {
+            "de": "Groß",
+            "en": "Large",
+            "es": "Larga",
+            "fr": "Grand",
+            "it": "Grande",
+            "ja": "ラージ",
+            "nl": "Groot",
+            "pt-BR": "Grande",
+            "zh-CN": "大",
+            "zh-TW": "大型"
+          },
+          "value": "large"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "id": "video_title",
+      "label": {
+        "de": "Überschrift",
+        "en": "Heading",
+        "es": "Título",
+        "fr": "En-tête",
+        "it": "Heading",
+        "ja": "見出し",
+        "nl": "Kop",
+        "pt-BR": "Título",
+        "zh-CN": "标题",
+        "zh-TW": "標題"
+      }
+    },
+    {
+      "type": "select",
+      "id": "text_size",
+      "label": {
+        "de": "Textgröße",
+        "en": "Text size",
+        "es": "Tamaño del texto",
+        "fr": "Taille du texte",
+        "it": "Dimensione testo",
+        "ja": "文字サイズ",
+        "nl": "Tekengrootte",
+        "pt-BR": "Tamanho do texto",
+        "zh-CN": "文本大小",
+        "zh-TW": "文字尺寸"
+      },
+      "default": "medium",
+      "options": [
+        {
+          "label": {
+            "de": "Mittel",
+            "en": "Medium",
+            "es": "Mediano",
+            "fr": "Moyenne",
+            "it": "Medio",
+            "ja": "中",
+            "nl": "Gemiddeld",
+            "pt-BR": "Médio",
+            "zh-CN": "中等",
+            "zh-TW": "中等"
+          },
+          "value": "medium"
+        },
+        {
+          "label": {
+            "de": "Groß",
+            "en": "Large",
+            "es": "Grande",
+            "fr": "Grande",
+            "it": "Grande",
+            "ja": "大",
+            "nl": "Groot",
+            "pt-BR": "Grande",
+            "zh-CN": "大",
+            "zh-TW": "大型"
+          },
+          "value": "large"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": {
+        "de": "Video",
+        "en": "Video",
+        "es": "Video",
+        "fr": "Vidéo",
+        "it": "Video",
+        "ja": "動画",
+        "nl": "Video",
+        "pt-BR": "Vídeo",
+        "zh-CN": "视频",
+        "zh-TW": "影片"
+      },
+      "category": {
+        "de": "Video",
+        "en": "Video",
+        "es": "Video",
+        "fr": "Vidéo",
+        "it": "Video",
+        "ja": "動画",
+        "nl": "Video",
+        "pt-BR": "Vídeo",
+        "zh-CN": "视频",
+        "zh-TW": "影片"
+      },
+      "settings": {
+        "image_position": "center center",
+        "show_overlay": true,
+        "style": "image_with_play",
+        "height": "medium"
+      }
+    }
+  ]
+}
+{% endschema %}

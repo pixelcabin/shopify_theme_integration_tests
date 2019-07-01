@@ -1,8 +1,11 @@
 # Building Integration Tests for Shopify Themes
 
-![Header Image](https://i.imgur.com/Fc0qEdr.jpg)
+[![Header Image](https://i.imgur.com/Fc0qEdr.jpg)](http://bit.ly/pixelcabin-unite-gh)
 
 Welcome! If you just saw the talk at Shopify Unite on setting up integration tests on Shopify, you're in the right place. Below, we're going to help you get set up, and using this repo, see how the various pieces can come together to improve the quality and stability of your Shopify themes.
+
+> A recording of the talk has now been posted to Youtube! If you missed it at Unite, check it out here: [Integration Testing for Themes (Shopify Unite Track Session 2019)
+](http://bit.ly/pixelcabin-unite-gh)
 
 ## Tech Stack
 

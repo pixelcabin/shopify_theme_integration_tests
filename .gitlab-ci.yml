@@ -1,0 +1,78 @@
+# This file is a template, and might need editing before it works on your project.
+# Official framework image. Look for the different tagged releases at:
+# https://hub.docker.com/r/library/node/tags/
+#image: node:latest
+
+# This folder is cached between builds
+# http://docs.gitlab.com/ce/ci/yaml/README.html#cache
+#cache:
+#  paths:
+#  - /node_modules
+
+# Docker images provided by https://github.com/cypress-io/cypress-docker-images
+
+# first, install Cypress, then run all tests (in parallel)
+stages:
+  - build
+  - test
+
+# to cache both npm modules and Cypress binary we use environment variables
+# to point at the folders we can list as paths in "cache" job settings
+variables:
+  npm_config_cache: /builds/cypress-io/cypress-example-docker-gitlab/.npm
+  CYPRESS_CACHE_FOLDER: /builds/cypress-io/cypress-example-docker-gitlab/cache/Cypress
+
+# cache using branch name
+# https://gitlab.com/help/ci/caching/index.md
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+    - .npm
+    - cache/Cypress
+    - node_modules
+
+# this job installs NPM dependencies and Cypress
+install:
+  image: cypress/base:10
+  stage: build
+
+  script:
+    - npm ci
+    # show where the Cypress test runner binaries are cached
+    - $(npm bin)/cypress cache path
+    # show all installed versions of Cypress binary
+    - $(npm bin)/cypress cache list
+    - $(npm bin)/cypress verify
+
+
+# two jobs that run after "install" job finishes
+# NPM dependencies and Cypress binary should be already installed
+cypress-e2e:
+  image: cypress/base:10
+  stage: test
+  script:
+    ##- npm install
+    - npm i -g ngrok --unsafe-perm=true --allow-root
+    - npm install -g grunt-cli
+    - mkdir public
+    - curl -sO http://stedolan.github.io/jq/download/linux64/jq
+    - chmod +x jq
+    - ngrok http file://$(pwd)/public/ --authtoken=$NGROK_AUTH_TOKEN > /dev/null &
+    - sleep 3
+    - echo {} > credentials.json
+    - grunt zip
+    - NGROK_PATH=$(curl 'http://localhost:4040/api/tunnels' | ./jq -r '.tunnels[0].public_url')/theme.zip
+    - echo "{\"theme\":{\"name\":\"GitlabCI Curl Test - $(date +"%D %T %Z")\",\"src\":\"$NGROK_PATH\"}}" > body.json
+    - echo $(cat body.json)
+    - 'TEST_THEME_ID=$(curl -d @body.json -H "Accept: application/json" -H "Content-Type: application/json" https://$SHOPIFY_API_KEY:$SHOPIFY_API_PASSWORD@$SHOPIFY_URL/admin/api/2019-04/themes.json | ./jq -r ''.theme.id'')'
+    - if [ ${TEST_THEME_ID} == null ] ; then exit 1 ; fi
+    - while [ $(curl https://$SHOPIFY_API_KEY:$SHOPIFY_API_PASSWORD@$SHOPIFY_URL/admin/api/2019-04/themes/$TEST_THEME_ID.json | ./jq -r '.theme.previewable') != 'true' ]; do echo 'Waiting for theme'; sleep 2; done
+    - $(npm bin)/cypress run --env SHOPIFY_URL=$SHOPIFY_URL,SHOPIFY_THEME_ID=$TEST_THEME_ID
+    - 'curl -H "Accept: application/json" -X DELETE https://$SHOPIFY_API_KEY:$SHOPIFY_API_PASSWORD@$SHOPIFY_URL/admin/api/2019-04/themes/$TEST_THEME_ID.json'
+  artifacts:
+    expire_in: 1 week
+    when: always
+    paths:
+      - cypress/screenshots
+      - cypress/videos
+

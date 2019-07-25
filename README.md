@@ -11,6 +11,9 @@ Welcome! If you just saw the talk at Shopify Unite on setting up integration tes
 
 This repo represents a stripped down version of our development pipeline at [Pixelcabin](https://pixelcabin.io). For simplicity, we have removed our normal compilation tasks, to focus on the Cypress component of this project. The integration tests are built around a combination of [Cypress](https://cypress.io) and [Travis CI](https://travis-ci.com), however feel free to look through how this has been structured, and rework for other tools. If you implement a similar setup for another CI provider, please do PR back to this repo, so we can build up a library of solutions across multiple CI environments.
 
+#### Additional CI providers supported
+* GitLab (see `.gitlab-ci.yml`)
+
 ### Installation Steps
 Like with all Shopify theme development, you cannot have a local instance of the Shopify platform running on your machine, so all development must be done whilst keeping in sync with a 'theme' on the Shopify store you are developing for. To do this, follow the steps below:
 

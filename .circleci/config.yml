@@ -1,48 +1,89 @@
 version: 2
+
 jobs:
-  deploy-test-site:
-      docker:
-        - image: circleci/node:11.3
-      working_directory: ~/shopify-theme
-      steps: 
-        - checkout
-        - run: 
+  install-deploy:
+    docker:
+    - image: cypress/base:10
+    working_directory: ~/shopify-theme
+    steps:
+      - checkout
+      - run: 
             name: npm-install
             command: 'npm install'
-        - run: 
-            name: ngrok-install
-            command: 'npm install -g ngrok'
-        - run:
-            name: make-public-folder-and-server
-            command: 'mkdir public'
-        - run: 
-            name: 
-            command: 'curl -sO http://stedolan.github.io/jq/download/linux64/jq'
-        - run:
-            name: ngrok-start
-            command: 'ngrok http file://$(pwd)/public/ --authtoken=${NGROK_AUTH_TOKEN} > /dev/null && sleep 3' 
-  
+      # I would normally not use grunt for this. 
+      - run: 
+          name: make-public-folder
+          command: 'mkdir public'
+      # Generall a build step would exist here
+      # for demo just a zip of the shop to the public folder
+      # zip does not exist in the orb. 
+      - run: 
+          name: update-env
+          command: 'apt-get update'
+      - run: 
+          name: install-zip
+          command: 'apt-get install unzip -y && apt-get install zip -y'
+
+      - run: 
+          name: generate-zip
+          command: 'zip -r public/theme.zip shop/'
+      - run: 
+          name: pause-for-zip-race
+          command: 'sleep 2'
+      # Note the env vars passed in below
+      # SHOPIFY_URL,
+      # SHOPIFY_API_KEY
+      # SHOPIFY_API_PASSWORD 
+      # NGROK_TOKEN
+      # CYPRESS_PROJECT_ID
+      # 
+      # Are all required set them in circle, this dos not require the credentials
+      - run: 
+          name: start-ngrok-and-deploy
+          command: 'node circle_scripts/deploy.js --BUILD_NUMBER="${CIRCLE_BUILD_NUM}" --SHOPIFY_URL="$SHOPIFY_URL" --SHOPIFY_API_KEY="$SHOPIFY_API_KEY" --SHOPIFY_API_PASSWORD="$SHOPIFY_API_PASSWORD" --NGROK_TOKEN="$NGROK_TOKEN" --CYPRESS_PROJECT_ID="$CYPRESS_PROJECT_ID"' 
+      # We will grab the public folder & cypress json we just wrote
+      - save_cache:
+          key: public-folder-{{ .Environment.CIRCLE_BRANCH }}-{{ .Environment.CIRCLE_SHA1 }}
+          paths:
+            - ~/shopify-theme/public
+            - ~/shopify-theme/cypress.json
+
   # Run the tests
-  integration-tests:
-      docker:
+  run-integration-tests:
+    docker:
       - image: cypress/base:10
     working_directory: ~/shopify-theme
     steps: 
       - checkout
+      # grab the cache $$
+      - restore_cache:
+          key: public-folder-{{ .Environment.CIRCLE_BRANCH }}-{{ .Environment.CIRCLE_SHA1 }}
       # Kinda redundant but as we are now using the cypress orb
       # it is kinda good practice to make sure its all up to spec
       - run: 
           name: install-deps
           command: 'npm install'
+      # Checks the theme is ready for testing
+      - run: 
+          name: checkThemeIsready
+          command: 'node circle_scripts/checkThemeIsReady.js'
       - run: 
           name: cypress-integration-tests
-          command: 'npm run cypress:ci'
+          command: 'npm run cypress:ci -- --config supportFile=false --record --key=$CYPRESS_RUN_KEY'
 
-
-  workflows:
-    version: 2
-    build_deploy_test:
-      jobs:
-        # - build:
-        - deploy-test-site:
-        # - integration-tests:
+# This actually orders and runs the jobs
+# Workflows
+workflows:
+  version: 2
+  deploy_theme:
+    jobs:
+      - install-deploy:
+          filters:
+            branches:
+              only:
+                - master
+      - run-integration-tests:
+          requires: 
+            - install-deploy
+            
+          

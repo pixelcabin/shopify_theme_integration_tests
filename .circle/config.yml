@@ -1,16 +1,88 @@
 version: 2
 jobs:
-  build:
-    docker:
-      - image: debian:stretch
+  # Run your build steps here
+  # build:
+  #   docker:
+  #     - image: circleci/node:11.3
+  #   working_directory: ~/shopify-theme
+  #   steps:
+  #     - checkout
+      # Restoring the caches is quicker than re installing
+      # - restore_cache:
+      #     key: dependency-cache-{{ .Environment.CIRCLE_BRANCH }}-{{ .Environment.CIRCLE_SHA1 }}
 
-    steps:
+      # - restore_cache:
+      #     key: v1-dist-{{ .Environment.CIRCLE_BRANCH }}-{{ .Environment.CIRCLE_SHA1 }}
+
+      # EXAMPLE BUILD STEPS
+      # Sass
+      # - run:
+      #   name: compile-sass: 
+      #   command: 'npm run build:sass'
+
+      # JS
+      # - run:
+      #   name: compile-js: 
+      #   command: 'npm run build:js'
+
+      # Build config
+      # Write a nod script to patch the core credential in
+      # pass in envirenment variables from circle so they can be run 
+      # - run:
+      #     name: build-config
+      #     command: 'npm run build:config'
+
+      # Copy shop to dist - kinda irrelevant but makes debugging a little easier
+      # As we have built the config.yml needed for deployment we can use a straight themekit wrapper
+      # - run:
+      #     name: copy-shop
+      #     command: 'mkdir dist && cp -rf shop/ dist/'
+
+      # Saving the caches so that we can use the dist in the nextt deployment job
+      # - save_cache:
+      #     key: dependency-cache-{{ .Environment.CIRCLE_BRANCH }}-{{ .Environment.CIRCLE_SHA1 }}
+      #     paths:
+      #       - node_modules
+      # - save_cache:
+      #     key: v1-dist-{{ .Environment.CIRCLE_BRANCH }}-{{ .Environment.CIRCLE_SHA1 }}
+      #     paths:
+      #         - dist
+    
+  # Deploy Test target
+  # deploy-test-site:
+  #     docker:
+  #       - image: circleci/node:11.3
+  #     working_directory: ~/shopify-theme
+  #     steps: 
+  #       - checkout
+  #       - restore_cache:
+  #           key: global-dependency-cache-{{ .Environment.CIRCLE_BRANCH }}-{{ .Environment.CIRCLE_SHA1 }}
+  #       - restore_cache:
+  #           key: dependency-cache-{{ .Environment.CIRCLE_BRANCH }}-{{ .Environment.CIRCLE_SHA1 }}
+  #       - run: 
+  #           name: deploy-to-testing
+  #           command: 'npm run deploy -- --shopifyDeployKey="$SHOPIFY_DEPLOY_KEY"'
+  
+  integration-tests:
+      docker:
+      - image: cypress/base:10
+    working_directory: ~/shopify-theme
+    steps: 
       - checkout
+      # Kinda redundant but as we are now using the cypress orb
+      # it is kinda good practice to 
+      - run: 
+          name: install-deps
+          command: 'npm install'
+      - run: 
+          name: cypress-integration-tests
+          command: 'npm run cypress:ci'
 
-      - run:
-          name: Greeting
-          command: echo Hello, world.
 
-      - run:
-          name: Print the Current Time
-          command: date
+  workflows:
+    version: 2
+    build_deploy_test:
+      jobs:
+        - build:
+        - deploy-test-site:
+        - integration-tests:

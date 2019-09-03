@@ -12,7 +12,8 @@
     "start": "npm run watch",
     "upload": "grunt shopify:upload",
     "watch": "grunt watch",
-    "cypress:open": "cypress open"
+    "cypress:open": "cypress open",
+    "cypress:ci": "cypress run"
   },
   "devDependencies": {
     "cypress": "~3.2.0",

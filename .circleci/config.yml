@@ -17,6 +17,8 @@ jobs:
       - run: 
           name: make-public-folder
           command: 'mkdir public'
+      # Generall a build step would exist here
+      # for demo just a zip of the shop to the public folder
       - run: 
           name: generate-zip
           command: 'zip -r public/output_file.zip shop/'
@@ -45,7 +47,7 @@ jobs:
       - checkout
       # grab the cache $$
       - restore_cache:
-        key: public-folder-{{ .Environment.CIRCLE_BRANCH }}-{{ .Environment.CIRCLE_SHA1 }}
+          key: public-folder-{{ .Environment.CIRCLE_BRANCH }}-{{ .Environment.CIRCLE_SHA1 }}
       # Kinda redundant but as we are now using the cypress orb
       # it is kinda good practice to make sure its all up to spec
       - run: 

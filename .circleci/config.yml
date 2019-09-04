@@ -1,42 +1,43 @@
 version: 2
 jobs:
+
   deploy-test-site:
       docker:
         - image: circleci/node:11.3
       working_directory: ~/shopify-theme
       steps: 
         - checkout
-        - run: 
-            name: npm-install
-            command: 'npm install'
-        - run: 
-            name: ngrok-install
-            command: 'npm install -g ngrok'
-        - run:
-            name: make-public-folder-and-server
-            command: 'mkdir public'
-        - run: 
-            name: 
-            command: 'curl -sO http://stedolan.github.io/jq/download/linux64/jq'
-        - run:
-            name: ngrok-start
-            command: 'ngrok http file://$(pwd)/public/ --authtoken=${NGROK_AUTH_TOKEN} > /dev/null && sleep 3' 
+        # - run: 
+        #     name: npm-install
+        #     command: 'npm install'
+        # - run: 
+        #     name: ngrok-install
+        #     command: 'npm install -g ngrok'
+        # - run:
+        #     name: make-public-folder-and-server
+        #     command: 'mkdir public'
+        # - run: 
+        #     name: 
+        #     command: 'curl -sO http://stedolan.github.io/jq/download/linux64/jq'
+        # - run:
+        #     name: ngrok-start
+        #     command: 'ngrok http file://$(pwd)/public/ --authtoken=${NGROK_AUTH_TOKEN} > /dev/null && sleep 3' 
   
   # Run the tests
-  integration-tests:
-      docker:
-      - image: cypress/base:10
-    working_directory: ~/shopify-theme
-    steps: 
-      - checkout
-      # Kinda redundant but as we are now using the cypress orb
-      # it is kinda good practice to make sure its all up to spec
-      - run: 
-          name: install-deps
-          command: 'npm install'
-      - run: 
-          name: cypress-integration-tests
-          command: 'npm run cypress:ci'
+  # integration-tests:
+  #     docker:
+  #     - image: cypress/base:10
+  #   working_directory: ~/shopify-theme
+  #   steps: 
+  #     - checkout
+  #     # Kinda redundant but as we are now using the cypress orb
+  #     # it is kinda good practice to make sure its all up to spec
+  #     - run: 
+  #         name: install-deps
+  #         command: 'npm install'
+  #     - run: 
+  #         name: cypress-integration-tests
+  #         command: 'npm run cypress:ci'
 
 
   workflows:

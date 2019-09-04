@@ -20,10 +20,12 @@ jobs:
       - run: 
           name: generate-zip
           command: 'zip -r public/output_file.zip shop/'
-      - run: 
-          name: serve-public-folder
-          command: 'npm run serve:public'
       # Note the env vars passed in below
+      # SHOPIFY_URL,
+      # SHOPIFY_API_KEY
+      # SHOPIFY_API_PASSWORD 
+      # NGROK_TOKEN
+      # Are all required set them in circle, this dos not require the credentials
       - run: 
           name: start-ngrok-and-deploy
           command: 'node circle_scripts/deploy.js --BUILD_NUMBER=$CIRCLE_BUILD_NUM --SHOPIFY_URL="$SHOPIFY_URL" --SHOPIFY_API_KEY="$SHOPIFY_API_KEY" --SHOPIFY_API_PASSWORD="$SHOPIFY_API_PASSWORD" --NGROK_TOKEN="$NGROK_TOKEN"' 

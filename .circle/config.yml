@@ -1,68 +1,33 @@
 version: 2
 jobs:
-  # Run your build steps here
-  # build:
-  #   docker:
-  #     - image: circleci/node:11.3
-  #   working_directory: ~/shopify-theme
-  #   steps:
-  #     - checkout
-      # Restoring the caches is quicker than re installing
-      # - restore_cache:
-      #     key: dependency-cache-{{ .Environment.CIRCLE_BRANCH }}-{{ .Environment.CIRCLE_SHA1 }}
 
-      # - restore_cache:
-      #     key: v1-dist-{{ .Environment.CIRCLE_BRANCH }}-{{ .Environment.CIRCLE_SHA1 }}
+  # Build Job
+  # Excluded for example.
 
-      # EXAMPLE BUILD STEPS
-      # Sass
-      # - run:
-      #   name: compile-sass: 
-      #   command: 'npm run build:sass'
-
-      # JS
-      # - run:
-      #   name: compile-js: 
-      #   command: 'npm run build:js'
-
-      # Build config
-      # Write a nod script to patch the core credential in
-      # pass in envirenment variables from circle so they can be run 
-      # - run:
-      #     name: build-config
-      #     command: 'npm run build:config'
-
-      # Copy shop to dist - kinda irrelevant but makes debugging a little easier
-      # As we have built the config.yml needed for deployment we can use a straight themekit wrapper
-      # - run:
-      #     name: copy-shop
-      #     command: 'mkdir dist && cp -rf shop/ dist/'
-
-      # Saving the caches so that we can use the dist in the nextt deployment job
-      # - save_cache:
-      #     key: dependency-cache-{{ .Environment.CIRCLE_BRANCH }}-{{ .Environment.CIRCLE_SHA1 }}
-      #     paths:
-      #       - node_modules
-      # - save_cache:
-      #     key: v1-dist-{{ .Environment.CIRCLE_BRANCH }}-{{ .Environment.CIRCLE_SHA1 }}
-      #     paths:
-      #         - dist
-    
-  # Deploy Test target
-  # deploy-test-site:
-  #     docker:
-  #       - image: circleci/node:11.3
-  #     working_directory: ~/shopify-theme
-  #     steps: 
-  #       - checkout
-  #       - restore_cache:
-  #           key: global-dependency-cache-{{ .Environment.CIRCLE_BRANCH }}-{{ .Environment.CIRCLE_SHA1 }}
-  #       - restore_cache:
-  #           key: dependency-cache-{{ .Environment.CIRCLE_BRANCH }}-{{ .Environment.CIRCLE_SHA1 }}
-  #       - run: 
-  #           name: deploy-to-testing
-  #           command: 'npm run deploy -- --shopifyDeployKey="$SHOPIFY_DEPLOY_KEY"'
+  #Deploy Test target
+  deploy-test-site:
+      docker:
+        - image: circleci/node:11.3
+      working_directory: ~/shopify-theme
+      steps: 
+        - checkout
+        - run: 
+            name: npm-install
+            command: 'npm install'
+        - run: 
+            name: ngrok-install
+            command: 'npm install -g ngrok'
+        - run:
+            name: make-public-folder-and-server
+            command: 'mkdir public'
+        - run: 
+            name: 
+            command: 'curl -sO http://stedolan.github.io/jq/download/linux64/jq'
+        -run:
+            name: ngrok-start
+            command: 'ngrok http file://$(pwd)/public/ --authtoken=${NGROK_AUTH_TOKEN} > /dev/null && sleep 3' 
   
+  # Run the tests
   integration-tests:
       docker:
       - image: cypress/base:10
@@ -70,7 +35,7 @@ jobs:
     steps: 
       - checkout
       # Kinda redundant but as we are now using the cypress orb
-      # it is kinda good practice to 
+      # it is kinda good practice to make sure its all up to spec
       - run: 
           name: install-deps
           command: 'npm install'
@@ -83,6 +48,6 @@ jobs:
     version: 2
     build_deploy_test:
       jobs:
-        - build:
+        # - build:
         - deploy-test-site:
         - integration-tests:

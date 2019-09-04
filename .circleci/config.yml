@@ -45,7 +45,6 @@ jobs:
 # This actually orders anjd runs the jubs
 workflows:
   version: 2
-    deploy-theme-files: 
-        jobs:
-          - deploy-test-site
+    jobs:
+      - deploy-test-site
           # - integration-tests:

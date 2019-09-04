@@ -7,9 +7,6 @@ jobs:
     working_directory: ~/shopify-theme
     steps:
       - checkout
-      - run:
-          name: update-npm
-          command: 'sudo npm install -g npm@latest'
       - run: 
             name: npm-install
             command: 'npm install'
@@ -48,6 +45,9 @@ jobs:
       # grab the cache $$
       - restore_cache:
           key: public-folder-{{ .Environment.CIRCLE_BRANCH }}-{{ .Environment.CIRCLE_SHA1 }}
+      - run: 
+          name: make-public-folder
+          command: 'mkdir public'
       - run: 
           name: copy-cachefolders-to-orb
           command: 'cp -rf /home/circleci/shopify-theme/public /root/circleci/shopify-theme/public && cp -rf /home/circleci/shopify-theme/cypress.json /root/circleci/shopify-theme/cypress.json'

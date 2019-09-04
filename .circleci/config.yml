@@ -7,9 +7,12 @@ jobs:
       working_directory: ~/shopify-theme
       steps: 
         - checkout
-        # - run: 
-        #     name: npm-install
-        #     command: 'npm install'
+        - run:
+          name: update-npm
+          command: 'sudo npm install -g npm@latest'
+        - run: 
+            name: npm-install
+            command: 'npm install'
         # - run: 
         #     name: ngrok-install
         #     command: 'npm install -g ngrok'
@@ -42,7 +45,7 @@ jobs:
 
   workflows:
     version: 2
-      deploy: 
-        jobs:
-          - deploy-test-site:
-          # - integration-tests:
+        deploy: 
+            jobs:
+              - deploy-test-site
+              # - integration-tests:

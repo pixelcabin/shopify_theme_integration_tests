@@ -18,7 +18,7 @@ jobs:
         - run: 
             name: 
             command: 'curl -sO http://stedolan.github.io/jq/download/linux64/jq'
-        -run:
+        - run:
             name: ngrok-start
             command: 'ngrok http file://$(pwd)/public/ --authtoken=${NGROK_AUTH_TOKEN} > /dev/null && sleep 3' 
   

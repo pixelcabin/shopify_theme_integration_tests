@@ -50,4 +50,4 @@ jobs:
       jobs:
         # - build:
         - deploy-test-site:
-        - integration-tests:
+        # - integration-tests:

@@ -15,7 +15,7 @@ jobs:
             command: 'npm install'
       - run: 
           name: ngrok-install
-          command: 'npm install -g ngrok'
+          command: 'sudo npm install ngrok'
       - run:
           name: make-public-folder-and-server
           command: 'mkdir public'

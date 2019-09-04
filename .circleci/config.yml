@@ -1,18 +1,28 @@
 version: 2
-jobs:
 
-  deploy-test-site:
-      docker:
-        - image: circleci/node:11.3
-      working_directory: ~/shopify-theme
-      steps: 
-        - checkout
-        - run:
+jobs:
+  bootstrap-dependencies:
+    docker:
+    - image: circleci/node:11.3
+    working_directory: ~/shopify-theme-build
+    steps:
+      - checkout
+      - run:
           name: update-npm
           command: 'sudo npm install -g npm@latest'
-        - run: 
-            name: npm-install
-            command: 'npm install'
+
+  # deploy-test-site:
+  #     docker:
+  #       - image: circleci/node:11.3
+  #     working_directory: ~/shopify-theme
+  #     steps: 
+  #       - checkout
+  #       - run:
+  #         name: update-npm
+  #         command: 'sudo npm install -g npm@latest'
+  #       - run: 
+  #           name: npm-install
+  #           command: 'npm install'
         # - run: 
         #     name: ngrok-install
         #     command: 'npm install -g ngrok'
@@ -43,8 +53,13 @@ jobs:
   #         command: 'npm run cypress:ci'
 
 # This actually orders anjd runs the jubs
+# Workflows
 workflows:
   version: 2
+  build_and_test_and_deploy:
     jobs:
-      - deploy-test-site
-          # - integration-tests:
+      - bootstrap-dependencies:
+          filters:
+            branches:
+              only:
+                - master

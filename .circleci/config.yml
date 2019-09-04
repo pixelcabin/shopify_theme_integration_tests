@@ -37,27 +37,27 @@ jobs:
             - ~/shopify-theme/cypress.json
 
   # Run the tests
-    run-integration-tests:
-      docker:
-        - image: cypress/base:10
-      working_directory: ~/shopify-theme
-      steps: 
-        - checkout
-        # grab the cache $$
-        - restore_cache:
-          key: public-folder-{{ .Environment.CIRCLE_BRANCH }}-{{ .Environment.CIRCLE_SHA1 }}
-        # Kinda redundant but as we are now using the cypress orb
-        # it is kinda good practice to make sure its all up to spec
-        - run: 
-            name: install-deps
-            command: 'npm install'
-        # Checks the theme is ready for testing
-        - run: 
-            name: checkThemeIsready
-            command: 'node circle_scripts/checkThemeIsReady.js'
-        - run: 
-            name: cypress-integration-tests
-            command: 'npm run cypress:ci'
+  run-integration-tests:
+    docker:
+      - image: cypress/base:10
+    working_directory: ~/shopify-theme
+    steps: 
+      - checkout
+      # grab the cache $$
+      - restore_cache:
+        key: public-folder-{{ .Environment.CIRCLE_BRANCH }}-{{ .Environment.CIRCLE_SHA1 }}
+      # Kinda redundant but as we are now using the cypress orb
+      # it is kinda good practice to make sure its all up to spec
+      - run: 
+          name: install-deps
+          command: 'npm install'
+      # Checks the theme is ready for testing
+      - run: 
+          name: checkThemeIsready
+          command: 'node circle_scripts/checkThemeIsReady.js'
+      - run: 
+          name: cypress-integration-tests
+          command: 'npm run cypress:ci'
 
 # This actually orders and runs the jobs
 # Workflows

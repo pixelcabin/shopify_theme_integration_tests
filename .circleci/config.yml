@@ -42,10 +42,10 @@ jobs:
   #         name: cypress-integration-tests
   #         command: 'npm run cypress:ci'
 
-
-  workflows:
-    version: 2
-        deploy: 
-            jobs:
-              - deploy-test-site
-              # - integration-tests:
+# This actually orders anjd runs the jubs
+workflows:
+  version: 2
+    deploy-theme-files: 
+        jobs:
+          - deploy-test-site
+          # - integration-tests:

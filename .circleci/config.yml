@@ -39,7 +39,7 @@ jobs:
             - ~/shopify-theme/cypress.json
   # Run the tests
     run-integration-tests:
-        docker:
+      docker:
         - image: cypress/base:10
       working_directory: ~/shopify-theme
       steps: 

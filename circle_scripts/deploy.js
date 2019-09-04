@@ -1,8 +1,14 @@
+const express = require('express')
+const app = express()
 const ngrok = require('ngrok')
 const fs = require('fs')
 const path = require('path')
 const args = require('yargs').argv
 const axios = require('axios')
+
+// start a basic server to serve the public folder
+app.use(express.static(path.resolve('./public')))
+const server = app.listen(3000);
 
 /**
  * A really rough and ready deploy script
@@ -10,6 +16,8 @@ const axios = require('axios')
  */
 const serverAndDeploy = async () => {
   
+  // serve public
+
   const {
     SHOPIFY_API_KEY,
     SHOPIFY_API_PASSWORD, 
@@ -48,6 +56,7 @@ const serverAndDeploy = async () => {
 
       if(!response.data || !response.data.theme || !response.data.theme.id) { 
         console.log('error deploying theme')
+        server.close()
         ngrok.kill()
         throw {status: 500, message: 'no theme created'}
       }
@@ -57,7 +66,8 @@ const serverAndDeploy = async () => {
       const previewUrl = `https://${SHOPIFY_URL}?preview_theme_id=${themeId}`
       const themeCheckUrl = `https://${SHOPIFY_API_KEY}:${SHOPIFY_API_PASSWORD}@${SHOPIFY_URL}/admin/api/2019-07/themes/${themeId}.json`
       const themeAudit = Object.assign({}, response.data.theme, {themePreviewUrl: previewUrl, themeCheckUrl: themeCheckUrl})
-      // kill ngrok
+      // kill ngrok & Server
+      server.close()
       ngrok.kill()
 
       // write an audit file I would normally write this to the actual themes
@@ -73,6 +83,7 @@ const serverAndDeploy = async () => {
     .catch(err => {
       // Deploy error
       console.log('error deploying theme')
+      server.close()
       ngrok.kill()
       throw err
     })

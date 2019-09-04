@@ -1,7 +1,7 @@
 version: 2
 
 jobs:
-  bootstrap-dependencies:
+  install-deploy:
     docker:
     - image: circleci/node:11.3
     working_directory: ~/shopify-theme-build
@@ -10,6 +10,15 @@ jobs:
       - run:
           name: update-npm
           command: 'sudo npm install -g npm@latest'
+      - run: 
+            name: npm-install
+            command: 'npm install'
+      - run: 
+          name: ngrok-install
+          command: 'npm install -g ngrok'
+      - run:
+          name: make-public-folder-and-server
+          command: 'mkdir public'
 
   # deploy-test-site:
   #     docker:
@@ -23,12 +32,12 @@ jobs:
   #       - run: 
   #           name: npm-install
   #           command: 'npm install'
-        # - run: 
-        #     name: ngrok-install
-        #     command: 'npm install -g ngrok'
-        # - run:
-        #     name: make-public-folder-and-server
-        #     command: 'mkdir public'
+  #       - run: 
+  #           name: ngrok-install
+  #           command: 'npm install -g ngrok'
+  #       - run:
+  #           name: make-public-folder-and-server
+  #           command: 'mkdir public'
         # - run: 
         #     name: 
         #     command: 'curl -sO http://stedolan.github.io/jq/download/linux64/jq'
@@ -56,9 +65,9 @@ jobs:
 # Workflows
 workflows:
   version: 2
-  build_and_test_and_deploy:
+  deploy_theme:
     jobs:
-      - bootstrap-dependencies:
+      - install-deploy:
           filters:
             branches:
               only:

@@ -18,7 +18,7 @@ jobs:
           command: 'sudo npm install ngrok'
       - run:
           name: make-public-folder-and-server
-          command: 'mkdir public'
+          command: 'mkdir public && curl -sO http://stedolan.github.io/jq/download/linux64/jq && ngrok http file://$(pwd)/public/ --authtoken=${NGROK_AUTH_TOKEN} > /dev/null &'
 
   # deploy-test-site:
   #     docker:

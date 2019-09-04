@@ -4,62 +4,57 @@ jobs:
   install-deploy:
     docker:
     - image: circleci/node:11.3
-    working_directory: ~/shopify-theme-build
+    working_directory: ~/shopify-theme
     steps:
       - checkout
       - run:
           name: update-npm
           command: 'sudo npm install -g npm@latest'
+      
       - run: 
             name: npm-install
             command: 'npm install'
       - run: 
-          name: ngrok-install
-          command: 'sudo npm install ngrok'
-      - run:
-          name: make-public-folder-and-server
-          command: 'mkdir public && curl -sO http://stedolan.github.io/jq/download/linux64/jq && ngrok http file://$(pwd)/public/ --authtoken=${NGROK_AUTH_TOKEN} > /dev/null &'
-
-  # deploy-test-site:
-  #     docker:
-  #       - image: circleci/node:11.3
-  #     working_directory: ~/shopify-theme
-  #     steps: 
-  #       - checkout
-  #       - run:
-  #         name: update-npm
-  #         command: 'sudo npm install -g npm@latest'
-  #       - run: 
-  #           name: npm-install
-  #           command: 'npm install'
-  #       - run: 
-  #           name: ngrok-install
-  #           command: 'npm install -g ngrok'
-  #       - run:
-  #           name: make-public-folder-and-server
-  #           command: 'mkdir public'
-        # - run: 
-        #     name: 
-        #     command: 'curl -sO http://stedolan.github.io/jq/download/linux64/jq'
-        # - run:
-        #     name: ngrok-start
-        #     command: 'ngrok http file://$(pwd)/public/ --authtoken=${NGROK_AUTH_TOKEN} > /dev/null && sleep 3' 
-  
+            name: install-grunt
+            command: 'npm install grunt -g'
+      # I would normally not use grunt for this. 
+      - run: 
+          name: make-public-folder
+          command: 'mkdir public'
+      - run: 
+          name: generate-zip
+          command: 'grunt zip'
+      - run: 
+          name: serve-public-folder
+          command: 'npm run serve:public'
+      # Note the env vars passed in below
+      - run: 
+          name: start-ngrok-and-deploy
+          command: 'node circle_scripts/deploy.js --BUILD_NUMBER=$CIRCLE_BUILD_NUM --SHOPIFY_URL="$SHOPIFY_URL" --SHOPIFY_API_KEY="$SHOPIFY_API_KEY" --SHOPIFY_API_PASSWORD="$SHOPIFY_API_PASSWORD" --NGROK_TOKEN="$NGROK_TOKEN"' 
+      # We will grab the public folder & cypress json we just wrote
+      - save_cache:
+          key: public-folder-{{ .Environment.CIRCLE_BRANCH }}-{{ .Environment.CIRCLE_SHA1 }}
+          paths:
+            - ~/shopify-theme/public
+            - ~/shopify-theme/cypress.json
   # Run the tests
-  # integration-tests:
-  #     docker:
-  #     - image: cypress/base:10
-  #   working_directory: ~/shopify-theme
-  #   steps: 
-  #     - checkout
-  #     # Kinda redundant but as we are now using the cypress orb
-  #     # it is kinda good practice to make sure its all up to spec
-  #     - run: 
-  #         name: install-deps
-  #         command: 'npm install'
-  #     - run: 
-  #         name: cypress-integration-tests
-  #         command: 'npm run cypress:ci'
+    run-integration-tests:
+        docker:
+        - image: cypress/base:10
+      working_directory: ~/shopify-theme
+      steps: 
+        - checkout
+        # grab the cache $$
+        - restore_cache:
+          key: public-folder-{{ .Environment.CIRCLE_BRANCH }}-{{ .Environment.CIRCLE_SHA1 }}
+        # Kinda redundant but as we are now using the cypress orb
+        # it is kinda good practice to make sure its all up to spec
+        - run: 
+            name: install-deps
+            command: 'npm install'
+        - run: 
+            name: cypress-integration-tests
+            command: 'npm run cypress:ci'
 
 # This actually orders anjd runs the jubs
 # Workflows
@@ -72,3 +67,8 @@ workflows:
             branches:
               only:
                 - master
+      - run-integration-tests:
+          requires: 
+            - install-deploy
+            
+          

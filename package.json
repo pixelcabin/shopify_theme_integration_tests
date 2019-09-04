@@ -13,9 +13,11 @@
     "upload": "grunt shopify:upload",
     "watch": "grunt watch",
     "cypress:open": "cypress open",
-    "cypress:ci": "cypress run"
+    "cypress:ci": "cypress run",
+    "serve:public": "serve public/ -p 3000"
   },
   "devDependencies": {
+    "axios": "^0.19.0",
     "cypress": "~3.2.0",
     "growl": "^1.10.5",
     "grunt": "~1.0.1",
@@ -24,6 +26,12 @@
     "grunt-contrib-watch": "^1.1.0",
     "grunt-exec": "^1.0.1",
     "grunt-shopify": "github:michaelrshannon/grunt-shopify#zip-upload",
-    "grunt-zip": "^0.18.2"
+    "grunt-zip": "^0.18.2",
+    "serve": "^11.1.0",
+    "yargs": "^14.0.0"
+  },
+  "dependencies": {
+    "ngrok": "^3.2.5",
+    "save-dev": "^2.0.0"
   }
 }

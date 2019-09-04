@@ -6,7 +6,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-shopify');
   grunt.loadNpmTasks('grunt-zip');
 
-  let credentials = grunt.file.readJSON('credentials.json');
+  let credentials = grunt.file.readJSON('credentials.json') = {};
   grunt.initConfig({
     credentials: credentials,
 

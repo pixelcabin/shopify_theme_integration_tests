@@ -1,10 +1,5 @@
 version: 2
 jobs:
-
-  # Build Job
-  # Excluded for example.
-
-  #Deploy Test target
   deploy-test-site:
       docker:
         - image: circleci/node:11.3

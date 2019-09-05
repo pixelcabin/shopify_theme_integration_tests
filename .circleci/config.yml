@@ -16,6 +16,10 @@ jobs:
           command: 'mkdir public'
       # Generall a build step would exist here
       # for demo just a zip of the shop to the public folder
+      # zip does not exist in the orb. 
+      - run: 
+          name: install-zip
+          command: 'sudo apt-get install zip'
       - run: 
           name: generate-zip
           command: 'zip -r public/theme.zip shop/'

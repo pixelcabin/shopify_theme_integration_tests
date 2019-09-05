@@ -50,7 +50,7 @@ jobs:
           command: 'mkdir public'
       - run: 
           name: copy-cachefolders-to-orb
-          command: 'cp -rf /home/circleci/shopify-theme/public /root/circleci/shopify-theme/public && cp -rf /home/circleci/shopify-theme/cypress.json /root/circleci/shopify-theme/cypress.json'
+          command: 'cp -rf /home/circleci/shopify-theme/public /root/shopify-theme/public && cp -rf /home/circleci/shopify-theme/cypress.json /root/shopify-theme/cypress.json'
       # Kinda redundant but as we are now using the cypress orb
       # it is kinda good practice to make sure its all up to spec
       - run: 

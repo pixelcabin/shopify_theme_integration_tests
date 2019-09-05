@@ -3,7 +3,7 @@ version: 2
 jobs:
   install-deploy:
     docker:
-    - image: circleci/node:11.3
+    - image: cypress/base:10
     working_directory: ~/shopify-theme
     steps:
       - checkout
@@ -48,9 +48,6 @@ jobs:
       - run: 
           name: make-public-folder
           command: 'mkdir public'
-      - run: 
-          name: copy-cachefolders-to-orb
-          command: 'cp -rf /home/circleci/shopify-theme/public /root/shopify-theme/public && cp -rf /home/circleci/shopify-theme/cypress.json /root/shopify-theme/cypress.json'
       # Kinda redundant but as we are now using the cypress orb
       # it is kinda good practice to make sure its all up to spec
       - run: 

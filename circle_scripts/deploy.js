@@ -58,7 +58,7 @@ const serverAndDeploy = async () => {
         console.log('error deploying theme')
         server.close()
         ngrok.kill()
-        throw {status: 500, message: 'no theme created'}
+        throw new Error ({status: 500, message: 'no theme created'})
       }
 
       const themeId = response.data.theme.id
@@ -82,7 +82,7 @@ const serverAndDeploy = async () => {
     })
     .catch(err => {
       // Deploy error
-      console.log('error deploying theme')
+      console.log('error deploying theme', err.message)
       server.close()
       ngrok.kill()
       throw err

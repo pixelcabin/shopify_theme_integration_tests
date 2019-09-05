@@ -18,7 +18,7 @@ jobs:
       # for demo just a zip of the shop to the public folder
       - run: 
           name: generate-zip
-          command: 'zip -r public/output_file.zip shop/'
+          command: 'zip -r public/theme.zip shop/'
       # Note the env vars passed in below
       # SHOPIFY_URL,
       # SHOPIFY_API_KEY

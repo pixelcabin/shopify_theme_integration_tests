@@ -18,8 +18,11 @@ jobs:
       # for demo just a zip of the shop to the public folder
       # zip does not exist in the orb. 
       - run: 
+          name: update-env
+          command: 'apt-get update'
+      - run: 
           name: install-zip
-          command: 'sudo apt-get install zip'
+          command: 'apt-get install zip'
       - run: 
           name: generate-zip
           command: 'zip -r public/theme.zip shop/'

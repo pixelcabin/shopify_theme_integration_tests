@@ -22,9 +22,7 @@ jobs:
           command: 'apt-get update'
       - run: 
           name: install-zip
-          command: 
-            - 'apt-get install unzip -y'
-            - 'apt-get install zip -y'
+          command: 'apt-get install unzip -y && apt-get install zip -y'
 
       - run: 
           name: generate-zip

@@ -64,7 +64,7 @@ const serverAndDeploy = async () => {
 
       const themeId = response.data.theme.id
       // Ok we have data, lets write it so we can reference if
-      const previewUrl = `https://${SHOPIFY_URL}?preview_theme_id=${themeId}`
+      const previewUrl = `https://${SHOPIFY_URL}?preview_theme_id=${themeId}&visitPath=`
       const themeCheckUrl = `https://${SHOPIFY_API_KEY}:${SHOPIFY_API_PASSWORD}@${SHOPIFY_URL}/admin/api/2019-07/themes/${themeId}.json`
       const themeAudit = Object.assign({}, response.data.theme, {themePreviewUrl: previewUrl, themeCheckUrl: themeCheckUrl})
       // kill ngrok & Server

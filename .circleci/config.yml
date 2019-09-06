@@ -35,7 +35,7 @@ jobs:
       # Are all required set them in circle, this dos not require the credentials
       - run: 
           name: start-ngrok-and-deploy
-          command: 'node circle_scripts/deploy.js --BUILD_NUMBER={{ .Environment.CIRCLE_BUILD_NUM }} --SHOPIFY_URL="$SHOPIFY_URL" --SHOPIFY_API_KEY="$SHOPIFY_API_KEY" --SHOPIFY_API_PASSWORD="$SHOPIFY_API_PASSWORD" --NGROK_TOKEN="$NGROK_TOKEN"' 
+          command: 'node circle_scripts/deploy.js --BUILD_NUMBER={{ .Environment.CIRCLE_BUILD_NUM }} --SHOPIFY_URL="$SHOPIFY_URL" --SHOPIFY_API_KEY="$SHOPIFY_API_KEY" --SHOPIFY_API_PASSWORD="$SHOPIFY_API_PASSWORD" --NGROK_TOKEN="$NGROK_TOKEN" --CYPRESS_PROJECT_ID="$CYPRESS_PROJECT_ID"' 
       # We will grab the public folder & cypress json we just wrote
       - save_cache:
           key: public-folder-{{ .Environment.CIRCLE_BRANCH }}-{{ .Environment.CIRCLE_SHA1 }}

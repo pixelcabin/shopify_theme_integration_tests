@@ -76,7 +76,7 @@ const serverAndDeploy = async () => {
       console.log('Theme created cuccessfully & audit file written', response.data.theme)
 
       // write Cypress json so we can dynamically pick this up at any point
-      fs.writeFileSync(`./cypress.json`, `{"baseUrl":" ${previewUrl}", "projectId": "${CYPRESS_PROJECT_ID ? CYPRESS_PROJECT_ID : ''}"}`)
+      fs.writeFileSync(`./cypress.json`, `{"baseUrl":"${previewUrl}", "projectId": "${CYPRESS_PROJECT_ID ? CYPRESS_PROJECT_ID : ''}"}`)
       console.log('./cypress.json updated with preview url')
       // all good 
       return {success: true, message: `Theme Created successfully with the id: ${themeId}`}

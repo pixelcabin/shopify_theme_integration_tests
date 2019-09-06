@@ -1,7 +1,7 @@
 describe('Landing Page', function() {
   beforeEach(function() {
     // As the first link is a preview this will need a pretty nasty work around
-    // basically hit the preview, then redirect. 
+    // basically hit the preview, then redirect to the path
     cy.visit()
     cy.visit('/');
   });

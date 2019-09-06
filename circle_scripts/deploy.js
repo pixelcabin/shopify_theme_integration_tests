@@ -17,7 +17,6 @@ const server = app.listen(3000);
 const serverAndDeploy = async () => {
   
   // serve public
-
   const {
     SHOPIFY_API_KEY,
     SHOPIFY_API_PASSWORD, 
@@ -27,17 +26,19 @@ const serverAndDeploy = async () => {
     CYPRESS_PROJECT_ID
   } = args
 
+  console.log(args)
+
   if(!SHOPIFY_API_KEY || !SHOPIFY_API_PASSWORD || !SHOPIFY_URL || !NGROK_TOKEN) {
     console.log("Please set environment variables in circleci all of the following are required. SHOPIFY_API_KEY && SHOPIFY_API_PASSWORD && SHOPIFY_URL && NGROK_TOKEN")
     throw new Error('Vars missing all of the following are required: SHOPIFY_API_KEY, SHOPIFY_API_PASSWORD, SHOPIFY_URL, NGROK_TOKEN, CYPRESS_PROJECT_ID. You can set these in circle envirment varianbles for the project.')
   }
 
   // ngrok to port 3000 which is serving the public folder
-  const url = await ngrok.connect({
-    proto: 'http',
-    port: 3000,
-    authToken: NGROK_TOKEN,
-  })
+    const url = await ngrok.connect({
+      proto: 'http',
+      port: 3000,
+      authToken: NGROK_TOKEN,
+    })
 
   // this will be printed in the termininal
   console.log('Serving public folder at:', url)
@@ -52,14 +53,14 @@ const serverAndDeploy = async () => {
         "role": "unpublished"
     }
   }
+
   return axios.post(installUrl, themeObject)
     .then(response => {
-
       if(!response.data || !response.data.theme || !response.data.theme.id) { 
         console.log('error deploying theme')
         server.close()
         ngrok.kill()
-        throw new Error ({status: 500, message: 'no theme created'})
+        return new Error('no theme created')
       }
 
       const themeId = response.data.theme.id
@@ -83,7 +84,7 @@ const serverAndDeploy = async () => {
     })
     .catch(err => {
       // Deploy error
-      console.log('error deploying theme', err.message)
+      console.log('error deploying theme !!', err.message)
       server.close()
       ngrok.kill()
       throw err
@@ -93,4 +94,12 @@ const serverAndDeploy = async () => {
   // Write Public so it can be saved and retrieved
 }
 
-serverAndDeploy();
+
+
+serverAndDeploy()
+  .then(() => console.log('Deployed Successful'))
+  .catch(() => {
+    const err = new Error('Theme Not Deployed') 
+    console.log('GOT HERE', err)
+    return err 
+  });

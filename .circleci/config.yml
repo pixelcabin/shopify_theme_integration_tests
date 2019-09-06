@@ -64,7 +64,7 @@ jobs:
           command: 'node circle_scripts/checkThemeIsReady.js'
       - run: 
           name: cypress-integration-tests
-          command: 'npm run cypress:ci'
+          command: 'npm run cypress:ci -- --env DISABLE_COMMANDS="true"'
 
 # This actually orders and runs the jobs
 # Workflows

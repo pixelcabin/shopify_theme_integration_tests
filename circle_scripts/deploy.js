@@ -29,7 +29,7 @@ const serverAndDeploy = async () => {
 
   if(!SHOPIFY_API_KEY || !SHOPIFY_API_PASSWORD || !SHOPIFY_URL || !NGROK_TOKEN) {
     console.log("Please set environment variables in circleci all of the following are required. SHOPIFY_API_KEY && SHOPIFY_API_PASSWORD && SHOPIFY_URL && NGROK_TOKEN")
-    throw new Error('Vars missing all of the following are required: SHOPIFY_API_KEY, SHOPIFY_API_PASSWORD, SHOPIFY_URL, NGROK_TOKEN. You can set these in circle envirment varianbles for the project.')
+    throw new Error('Vars missing all of the following are required: SHOPIFY_API_KEY, SHOPIFY_API_PASSWORD, SHOPIFY_URL, NGROK_TOKEN, CYPRESS_PROJECT_ID. You can set these in circle envirment varianbles for the project.')
   }
 
   // ngrok to port 3000 which is serving the public folder
@@ -76,7 +76,7 @@ const serverAndDeploy = async () => {
       console.log('Theme created cuccessfully & audit file written', response.data.theme)
 
       // write Cypress json so we can dynamically pick this up at any point
-      fs.writeFileSync(`${path.resolve('./')}cypress.json`, `{"baseUrl": ${previewUrl}, "projectId": "${CYPRESS_PROJECT_ID ? CYPRESS_PROJECT_ID : ''}"}`)
+      fs.writeFileSync(`./cypress.json`, `{"baseUrl":" ${previewUrl}", "projectId": "${CYPRESS_PROJECT_ID ? CYPRESS_PROJECT_ID : ''}"}`)
       console.log('./cypress.json updated with preview url')
       // all good 
       return {success: true, message: `Theme Created successfully with the id: ${themeId}`}

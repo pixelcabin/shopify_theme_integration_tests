@@ -14,7 +14,8 @@
 // ***********************************************************
 
 // Import commands.js using ES2015 syntax:
-import './commands';
+// the circle implementation does not require the overrides it disables the support file on run over a written cypress.json
+import './commands'
 
 // Alternatively you can use CommonJS syntax:
 // require('./commands')

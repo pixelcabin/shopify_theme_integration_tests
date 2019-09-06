@@ -24,16 +24,12 @@
 // -- This is will overwrite an existing command --
 Cypress.Commands.overwrite('visit', (originalFn, url, options) => {
 
-  // the circle implementation passes `DISABLE_COMMANDS="true"`
-  // As these are dynamically writtedn and programtically included.
-  if(!Cypress.env('DISABLE_COMMANDS')) {
+    // NOTE: These Envs never get read !!! it will always require the credentials should be looked at
 
     const credentials = (Cypress.env('SHOPIFY_URL') === undefined) ?  require('../../credentials.json') : '';
     let themeID = (Cypress.env('SHOPIFY_THEME_ID') === undefined) ? credentials.theme_id : Cypress.env('SHOPIFY_THEME_ID');
   
     let full_path = `${url}?preview_theme_id=${themeID}`;
-  
-  }
 
   // originalFn is the existing `visit` command that you need to call
   // and it will receive whatever you pass in here.

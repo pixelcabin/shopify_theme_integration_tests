@@ -10,6 +10,7 @@ cache:
 install:
 - npm install
 - npm install -g ngrok
+- npm install -g grunt-cli 
 before_script:
 - mkdir public
 - curl -sO http://stedolan.github.io/jq/download/linux64/jq

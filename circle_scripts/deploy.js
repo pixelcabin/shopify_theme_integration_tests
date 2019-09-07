@@ -100,6 +100,6 @@ serverAndDeploy()
   .then(() => console.log('Deployed Successful'))
   .catch(() => {
     const err = new Error('Theme Not Deployed') 
-    console.log('GOT HERE', err)
-    return err 
+    console.error(err)
+    return process.abort()
   });

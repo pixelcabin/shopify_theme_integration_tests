@@ -29,7 +29,7 @@ jobs:
           command: 'zip -r public/theme.zip shop/'
       - run: 
           name: pause-for-zip-race
-          command: 'sleep 1'
+          command: 'sleep 2'
       # Note the env vars passed in below
       # SHOPIFY_URL,
       # SHOPIFY_API_KEY

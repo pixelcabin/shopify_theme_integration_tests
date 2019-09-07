@@ -18,6 +18,7 @@ script:
 - echo {} > credentials.json
 - grunt zip
 - NGROK_PATH=$(curl 'http://localhost:4040/api/tunnels' | ./jq -r '.tunnels[0].public_url')/theme.zip
+- echo ${NGROK_PATH}
 - echo "{\"theme\":{\"name\":\"Travis Curl Test - $(date +"%D %T %Z")\",\"src\":\"$NGROK_PATH\"}}" > body.json
 - echo $(cat body.json)
 - 'TEST_THEME_ID=$(curl -d @body.json -H "Accept: application/json" -H "Content-Type: application/json" https://$SHOPIFY_API_KEY:$SHOPIFY_API_PASSWORD@$SHOPIFY_URL/admin/api/2019-04/themes.json | ./jq -r ''.theme.id'')'

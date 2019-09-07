@@ -12,7 +12,7 @@ const tearDown = async () => {
     throw new Error('Theme not deleted') 
   }
 
-  if(currentStatus.data.id) {
+  if(deleteStatus.data.id) {
     console.log('theme is ready to go, fire up cypress!')
     return {id: themeAudit.id}
   }

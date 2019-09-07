@@ -20,4 +20,9 @@ const checkThemeIsReady = async () => {
 
 }
 
-checkThemeIsReady();
+checkThemeIsReady()
+  .then(data => data ? console.log('Theme is ready') : "")
+  .catch(err => {
+    console.log(err)
+    return process.abort()
+  })

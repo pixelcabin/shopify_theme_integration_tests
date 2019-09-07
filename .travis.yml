@@ -14,11 +14,11 @@ script:
 - curl -sO http://stedolan.github.io/jq/download/linux64/jq
 - chmod +x jq
 - ngrok http file://$(pwd)/public/ --authtoken=$NGROK_AUTH_TOKEN > /dev/null &
-- sleep 3
+- sleep 10
 - echo {} > credentials.json
 - grunt zip
 - NGROK_PATH=$(curl 'http://localhost:4040/api/tunnels' | ./jq -r '.tunnels[0].public_url')/theme.zip
-- echo "{\"theme\":{\"name\":\"GitlabCI Curl Test - $(date +"%D %T %Z")\",\"src\":\"$NGROK_PATH\"}}" > body.json
+- echo "{\"theme\":{\"name\":\"Travis Curl Test - $(date +"%D %T %Z")\",\"src\":\"$NGROK_PATH\"}}" > body.json
 - echo $(cat body.json)
 - 'TEST_THEME_ID=$(curl -d @body.json -H "Accept: application/json" -H "Content-Type: application/json" https://$SHOPIFY_API_KEY:$SHOPIFY_API_PASSWORD@$SHOPIFY_URL/admin/api/2019-04/themes.json | ./jq -r ''.theme.id'')'
 - if [ ${TEST_THEME_ID} == null ] ; then exit 1 ; fi

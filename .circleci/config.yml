@@ -70,6 +70,9 @@ jobs:
       - run: 
           name: cypress-integration-tests
           command: 'npm run cypress:ci -- --config supportFile=false --record --key=$CYPRESS_RUN_KEY'
+      - run: 
+          name: tear-down-theme
+          command: 'node circle_scripts/tearDown.js'
 
 # This actually orders and runs the jobs
 # Workflows

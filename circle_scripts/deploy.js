@@ -26,8 +26,6 @@ const serverAndDeploy = async () => {
     CYPRESS_PROJECT_ID
   } = args
 
-  console.log(args)
-
   if(!SHOPIFY_API_KEY || !SHOPIFY_API_PASSWORD || !SHOPIFY_URL || !NGROK_TOKEN) {
     console.log("Please set environment variables in circleci all of the following are required. SHOPIFY_API_KEY && SHOPIFY_API_PASSWORD && SHOPIFY_URL && NGROK_TOKEN")
     throw new Error('Vars missing all of the following are required: SHOPIFY_API_KEY, SHOPIFY_API_PASSWORD, SHOPIFY_URL, NGROK_TOKEN, CYPRESS_PROJECT_ID. You can set these in circle envirment varianbles for the project.')
@@ -65,7 +63,7 @@ const serverAndDeploy = async () => {
 
       const themeId = response.data.theme.id
       // Ok we have data, lets write it so we can reference if
-      const previewUrl = `https://${SHOPIFY_URL}?preview_theme_id=${themeId}&visitPath=`
+      const previewUrl = `https://${SHOPIFY_URL}`
       const themeCheckUrl = `https://${SHOPIFY_API_KEY}:${SHOPIFY_API_PASSWORD}@${SHOPIFY_URL}/admin/api/2019-07/themes/${themeId}.json`
       const themeAudit = Object.assign({}, response.data.theme, {themePreviewUrl: previewUrl, themeCheckUrl: themeCheckUrl})
       // kill ngrok & Server
@@ -77,8 +75,12 @@ const serverAndDeploy = async () => {
       console.log('Theme created cuccessfully & audit file written', response.data.theme)
 
       // write Cypress json so we can dynamically pick this up at any point
-      fs.writeFileSync(`./cypress.json`, `{"baseUrl":"${previewUrl}", "projectId": "${CYPRESS_PROJECT_ID ? CYPRESS_PROJECT_ID : ''}"}`)
-      console.log('./cypress.json updated with preview url')
+      fs.writeFileSync(`./cypress.json`, `{
+        "baseUrl":"${previewUrl}", 
+        "projectId": "${CYPRESS_PROJECT_ID ? CYPRESS_PROJECT_ID : ''}",
+        "previewQS" : "/?preview_theme_id=${themeId}", 
+      }`)
+      console.log('./cypress.json updated with correct base & preview queryString')
       // all good 
       return {success: true, message: `Theme Created successfully with the id: ${themeId}`}
     })

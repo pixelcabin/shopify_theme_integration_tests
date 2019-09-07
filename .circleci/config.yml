@@ -35,6 +35,8 @@ jobs:
       # SHOPIFY_API_KEY
       # SHOPIFY_API_PASSWORD 
       # NGROK_TOKEN
+      # CYPRESS_PROJECT_ID
+      # 
       # Are all required set them in circle, this dos not require the credentials
       - run: 
           name: start-ngrok-and-deploy

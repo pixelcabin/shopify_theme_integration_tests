@@ -1,8 +1,11 @@
 describe('Landing Page', function() {
   beforeEach(function() {
-    // As the first link is a preview this will need a pretty nasty work around
-    // basically hit the preview, then redirect to the path
-    cy.visit()
+
+    // Circle we set a qs param for the for the initial test
+    // this allows us once the preview has been triggered to be able to correctly pass visit() 
+    // without throwin an invalid url
+    if(Cypress.config().previewQS) {cy.visit(`/${Cypress.config().previewQS}`)}
+
     cy.visit('/');
   });
 

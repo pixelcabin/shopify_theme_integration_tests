@@ -20,16 +20,17 @@ script:
 - echo {} > credentials.json
 - grunt zip
 - NGROK_PATH=$(curl 'http://localhost:4040/api/tunnels' | jq -r '.tunnels[0].public_url')/theme.zip
-- echo ${NGROK_PATH}
-- echo "{\"theme\":{\"name\":\"Travis Curl Test - $(date +"%D %T %Z")\",\"src\":\"$NGROK_PATH\"}}"
-  > body.json
+- echo "{\"theme\":{\"name\":\"Travis Curl Test - $(date +"%D %T %Z")\",\"src\":\"$NGROK_PATH\"}}" > body.json
 - echo $(cat body.json)
-- 'TEST_THEME_ID=$(curl -d @body.json -H "Accept: application/json" -H "Content-Type: application/json" https://$SHOPIFY_API_KEY:$SHOPIFY_API_PASSWORD@$SHOPIFY_URL/admin/api/2019-04/themes.json | ./jq -r ''.theme.id'')'
-- echo $TEST_THEME_ID
-- echo $SHOPIFY_URL
+- 'TEST_THEME_ID=$(curl -d @body.json -H "Accept: application/json" -H "Content-Type:
+  application/json" https://${SHOPIFY_API_KEY}:${SHOPIFY_API_PASSWORD}@${SHOPIFY_URL}/admin/api/2019-04/themes.json
+  | jq -r ''.theme.id'')'
 - if [ ${TEST_THEME_ID} == null ] ; then exit 1 ; fi
-- while [ $(curl https://${SHOPIFY_API_KEY}:${SHOPIFY_API_PASSWORD}@${SHOPIFY_URL}/admin/api/2019-04/themes/$TEST_THEME_ID.json | jq -r '.theme.previewable') != 'true' ]; do echo 'Waiting for theme'; sleep 2;
-  done
+- while [ $(curl https://$SHOPIFY_API_KEY:$SHOPIFY_API_PASSWORD@$SHOPIFY_URL/admin/api/2019-04/themes/$TEST_THEME_ID.json | ./jq -r '.theme.previewable') != 'true' ]; do echo 'Waiting for theme'; sleep 2; done
+   
+# - while [ $(curl https://${SHOPIFY_API_KEY}:${SHOPIFY_API_PASSWORD}@${SHOPIFY_URL}/admin/api/2019-04/themes/$TEST_THEME_ID.json
+# | jq -r '.theme.previewable') != 'true' ]; do echo 'Waiting for theme'; sleep 2;
+#   done
 - cypress run --env SHOPIFY_URL=${SHOPIFY_URL},SHOPIFY_THEME_ID=$TEST_THEME_ID
 - 'curl -H "Accept: application/json" -X DELETE https://${SHOPIFY_API_KEY}:${SHOPIFY_API_PASSWORD}@${SHOPIFY_URL}/admin/api/2019-04/themes/$TEST_THEME_ID.json'
 addons:
@@ -38,7 +39,6 @@ addons:
     packages:
       # Ubuntu 16+ does not install this dependency by default, so we need to install it ourselves
       - libgconf-2-4
-# env:
-#   global:
-#     # Needs to be amended to get travis to work, could use global variable
-#   - SHOPIFY_URL: integration-testing-example.myshopify.com
+env:
+  global:
+  - SHOPIFY_URL: integration-testing-example.myshopify.com

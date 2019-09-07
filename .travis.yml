@@ -39,6 +39,6 @@ addons:
     packages:
       # Ubuntu 16+ does not install this dependency by default, so we need to install it ourselves
       - libgconf-2-4
-env:
-  global:
-  - SHOPIFY_URL: integration-testing-example.myshopify.com
+# env:
+#   global:
+#   - SHOPIFY_URL: integration-testing-example.myshopify.com

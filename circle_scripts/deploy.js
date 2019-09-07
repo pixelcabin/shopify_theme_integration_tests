@@ -78,7 +78,7 @@ const serverAndDeploy = async () => {
       fs.writeFileSync(`./cypress.json`, `{
         "baseUrl":"${previewUrl}", 
         "projectId": "${CYPRESS_PROJECT_ID ? CYPRESS_PROJECT_ID : ''}",
-        "previewQS" : "/?preview_theme_id=${themeId}", 
+        "previewQS" : "/?preview_theme_id=${themeId}"
       }`)
       console.log('./cypress.json updated with correct base & preview queryString')
       // all good 

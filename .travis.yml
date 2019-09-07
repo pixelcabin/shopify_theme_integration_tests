@@ -37,7 +37,7 @@ addons:
     packages:
       # Ubuntu 16+ does not install this dependency by default, so we need to install it ourselves
       - libgconf-2-4
-env:
-  global:
-    # Needs to be amended to get travis to work, could use global variable
-  - SHOPIFY_URL: integration-testing-example.myshopify.com
+# env:
+#   global:
+#     # Needs to be amended to get travis to work, could use global variable
+#   - SHOPIFY_URL: integration-testing-example.myshopify.com

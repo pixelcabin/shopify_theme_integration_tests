@@ -42,11 +42,12 @@ To start up the Cypress interface, run `cypress open`, and then select one or mo
 ### Integrating Cypress tests with Travis
 This repo has everything set up ready to run Cypress tests on Travis CI. To try this out, first create an account at travis-ci.com, and connect to your Github account or organisation.
 
-For Travis to successfully run the various commands, it will need to have access to some key ENV variables. Some are not sensitive (such as the store url), and can be added to the `.travis.yml` file in the clear. Others will need to be stored securely - these can be added as encrypted values to the `.travis.yml` file, using the [Travis CLI](https://docs.travis-ci.com/user/environment-variables/#encrypting-environment-variables).
+For Travis to successfully run the various commands, it will need to have access to some key ENV variables. Some are not sensitive (such as the store url), and can be added to the `.travis.yml` file in the clear. Others will need to be stored securely - these can be added as encrypted values to the `.travis.yml` file, using the [Travis CLI](https://docs.travis-ci.com/user/environment-variables/#encrypting-environment-variables). These can also be added in the travis GUI, under settings. 
 
-1. In `.travis.yml`, set a value under `env.global.shopify_url` to the store you'll be running the tests against
-1. Using the Travis CLI, run `travis encrypt SHOPIFY_API_KEY=[your api key] --add`
-1. Using the Travis CLI, run `travis encrypt SHOPIFY_API_PASSWORD=[your api password] --add`
+1. In `.travis.yml`, set a value under `env.global.SHOPIFY_URL` to the store you'll be running the tests against ( you can also add this a travis env variable and omit the definition in the travis.yml)
+2. Using the Travis CLI, run `travis encrypt SHOPIFY_API_KEY=[your api key] --add`
+3. Using the Travis CLI, run `travis encrypt SHOPIFY_API_PASSWORD=[your api password] --add`
+
 
 You'll also need an ngrok account (you can use the free plan) - once set up, grab your auth token from [https://dashboard.ngrok.com/auth](https://dashboard.ngrok.com/auth), and add to Travis: `travis encrypt NGROK_AUTH_TOKEN=[your ngrok auth token] --add`
 

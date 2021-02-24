@@ -1,3 +1,4 @@
 {
-  "baseUrl": "https://integration-testing-example.myshopify.com"
+  "baseUrl": "https://integration-testing-example.myshopify.com",
+  "chromeWebSecurity": false
 }

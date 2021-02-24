@@ -39,9 +39,9 @@ module.exports = function(grunt) {
 
     exec: {
       touch_css_js: 'sleep 1 && touch shop/assets/*.css shop/assets/*.js',
-      touch_config: 'sleep 1 && touch shop/config/*',
+      // touch_config: 'sleep 1 && touch shop/config/*', // Don't sync config files
       touch_layout: 'sleep 1 && touch shop/layout/*',
-      touch_locales: 'sleep 1 && touch shop/locales/*',
+      // touch_locales: 'sleep 1 && touch shop/locales/*', // Don't sync locale files
       touch_assets: 'sleep 2 && touch shop/assets/*',
       touch_sections: 'sleep 5 && touch shop/sections/*',
       touch_snippets: 'sleep 5 && touch shop/snippets/*',
@@ -50,7 +50,7 @@ module.exports = function(grunt) {
 
     watch: {
       shopify: {
-        files: ['shop/**'],
+        files: ['shop/**', '!shop/config/**', '!shop/locales/**'], // Don't sync config and locale files
         tasks: ['shopify']
       }
     },

@@ -1,15 +1,16 @@
 language: node_js
 node_js:
-- '7'
+- '14'
 sudo: required
 cache:
   npm: true
   directories:
-    - /home/travis/.cache/Cypress
-    - ~/.npm
+  - "/home/travis/.cache/Cypress"
+  - "~/.npm"
 install:
 - npm install
 - npm install -g ngrok
+- npm install -g grunt-cli
 before_script:
 - mkdir public
 - curl -sO http://stedolan.github.io/jq/download/linux64/jq
@@ -27,16 +28,41 @@ script:
   | jq -r ''.theme.id'')'
 - if [ ${TEST_THEME_ID} == null ] ; then exit 1 ; fi
 - while [ $(curl https://${SHOPIFY_API_KEY}:${SHOPIFY_API_PASSWORD}@${SHOPIFY_URL}/admin/api/2019-04/themes/$TEST_THEME_ID.json
-  | jq -r '.theme.previewable') != 'true' ]; do echo 'Waiting for theme'; sleep 2;
+  | jq -r '.theme.previewable') != 'true' ]; do echo 'Waiting for theme'; sleep 5;
   done
+- echo "{\"baseUrl\":\"https://${SHOPIFY_URL}\"}" > cypress.json
+- echo $(cat cypress.json)
 - cypress run --env SHOPIFY_URL=${SHOPIFY_URL},SHOPIFY_THEME_ID=$TEST_THEME_ID
 - 'curl -H "Accept: application/json" -X DELETE https://${SHOPIFY_API_KEY}:${SHOPIFY_API_PASSWORD}@${SHOPIFY_URL}/admin/api/2019-04/themes/$TEST_THEME_ID.json'
 addons:
   chrome: stable
   apt:
     packages:
-      # Ubuntu 16+ does not install this dependency by default, so we need to install it ourselves
-      - libgconf-2-4
+    - libgconf-2-4
 env:
   global:
-  - SHOPIFY_URL: integration-testing-example.myshopify.com
+  - SHOPIFY_URL: store-url-here.myshopify.com
+# Run the following commands to add the remaining 3 env vars
+# travis encrypt -r askphill/[repo_name_here] NGROK_AUTH_TOKEN=[ngrok_token_here] --add          
+# travis encrypt -r askphill/[repo_name_here] SHOPIFY_API_KEY=[shopify_api_key_here] --add          
+# travis encrypt -r askphill/[repo_name_here] SHOPIFY_API_PASSWORD=[shopify_api_password_here] --add          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
